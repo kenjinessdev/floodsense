@@ -1,0 +1,3 @@
+{
+  "extends": "@floodsense/config/tsconfig.base.json"
+}

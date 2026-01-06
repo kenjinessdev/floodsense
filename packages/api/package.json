@@ -1,0 +1,25 @@
+{
+  "name": "@floodsense/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@floodsense/env": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@floodsense/config": "workspace:*",
+    "@types/express": "catalog:",
+    "typescript": "catalog:"
+  }
+}
