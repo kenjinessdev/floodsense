@@ -166,7 +166,7 @@ function HomeComponent() {
                         )}
 
                         {/* Model Info */}
-                        {modelInfoQuery.data && (
+                        {/* {modelInfoQuery.data && (
                             <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -205,7 +205,7 @@ function HomeComponent() {
                                     </div>
                                 </CardContent>
                             </Card>
-                        )}
+                        )} */}
 
                         {/* Disclaimer */}
                         <Card className="border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
@@ -214,14 +214,18 @@ function HomeComponent() {
                                     <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 shrink-0" />
                                     <div className="text-xs text-amber-900 dark:text-amber-200">
                                         <p className="font-semibold mb-1">
-                                            Important Notice
+                                            Current Prototype Status
                                         </p>
                                         <p>
-                                            This tool provides susceptibility
-                                            mapping using offline data, not
-                                            real-time forecasting. Results are
-                                            based on terrain analysis and
-                                            historical rainfall patterns.
+                                            This application demonstrates the
+                                            user interface and logic flow of the
+                                            Ensemble Random Forest & XGBoost
+                                            system. For this proof-of-concept,
+                                            the application utilizes
+                                            pre-calculated susceptibility data
+                                            derived from the study's offline
+                                            dataset (SRTM Elevation, PAGASA
+                                            Rainfall, etc.).
                                         </p>
                                     </div>
                                 </div>
@@ -229,7 +233,7 @@ function HomeComponent() {
                         </Card>
 
                         {/* About */}
-                        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+                        {/* <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
                                     About
@@ -247,7 +251,7 @@ function HomeComponent() {
                                     rainfall patterns in Mindanao.
                                 </p>
                             </CardContent>
-                        </Card>
+                        </Card> */}
                     </div>
                 </div>
             </div>

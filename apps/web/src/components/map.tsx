@@ -5,8 +5,10 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import axios from "axios";
 import { Button } from "./ui/button";
 import { MapPin, Layers, Loader2 } from "lucide-react";
+import { utmToWgs84 } from "@/lib/utm-converter";
 
 // Fix default marker icon issue in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -35,6 +37,24 @@ export function MapComponent({
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const [showLayers, setShowLayers] = useState(false);
     const [activeLayer, setActiveLayer] = useState<string>("base");
+    const boundaryRef = useRef<Array<[number, number]> | null>(null);
+
+    const isPointInPolygon = (
+        lat: number,
+        lng: number,
+        poly: Array<[number, number]>
+    ): boolean => {
+        let inside = false;
+        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+            const [yi, xi] = poly[i];
+            const [yj, xj] = poly[j];
+            const intersect =
+                yi > lat !== yj > lat &&
+                lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    };
 
     useEffect(() => {
         if (!mapContainerRef.current || mapRef.current) return;
@@ -52,26 +72,63 @@ export function MapComponent({
             maxZoom: 18,
         }).addTo(map);
 
-        // Add Davao City boundary rectangle
-        const davaoBounds: L.LatLngBoundsExpression = [
-            [6.9, 125.3],
-            [7.3, 125.8],
-        ];
-        L.rectangle(davaoBounds, {
-            color: "#3b82f6",
-            weight: 2,
-            fill: false,
-            dashArray: "5, 10",
-        }).addTo(map);
+        // Load and render Davao City boundary
+        axios
+            .get("/final_davao_city_boundary.geojson")
+            .then((res) => {
+                const feature = res.data.features?.[0];
+                if (feature?.geometry?.type === "MultiPolygon") {
+                    const coords = feature.geometry.coordinates[0][0] as Array<
+                        [number, number]
+                    >;
+                    const wgs84Ring = coords.map(([e, n]) => utmToWgs84(e, n));
+                    boundaryRef.current = wgs84Ring;
+
+                    const geoJson = {
+                        type: "FeatureCollection" as const,
+                        features: [
+                            {
+                                type: "Feature" as const,
+                                geometry: {
+                                    type: "MultiPolygon" as const,
+                                    coordinates: [
+                                        [
+                                            wgs84Ring.map(([lat, lng]) => [
+                                                lng,
+                                                lat,
+                                            ]),
+                                        ],
+                                    ],
+                                },
+                                properties: {},
+                            },
+                        ],
+                    };
+
+                    const layer = L.geoJSON(geoJson as any, {
+                        style: {
+                            color: "#3b82f6",
+                            weight: 2,
+                            fillOpacity: 0,
+                            dashArray: "5, 10",
+                        },
+                    }).addTo(map);
+
+                    map.fitBounds(layer.getBounds(), { padding: [32, 32] });
+                }
+            })
+            .catch((err) => console.error("Failed to load boundary:", err));
 
         // Add click handler to place marker
         map.on("click", (e: L.LeafletMouseEvent) => {
             const { lat, lng } = e.latlng;
 
-            // Validate bounds
-            if (lat < 6.9 || lat > 7.3 || lng < 125.3 || lng > 125.8) {
+            if (
+                !boundaryRef.current ||
+                !isPointInPolygon(lat, lng, boundaryRef.current)
+            ) {
                 alert(
-                    "Please select a location within Davao City bounds (shown in blue)"
+                    "Please select a location within the Davao City boundary"
                 );
                 return;
             }
@@ -131,15 +188,16 @@ export function MapComponent({
                 (position) => {
                     const { latitude, longitude } = position.coords;
 
-                    // Check if in Davao City bounds
                     if (
-                        latitude < 6.9 ||
-                        latitude > 7.3 ||
-                        longitude < 125.3 ||
-                        longitude > 125.8
+                        !boundaryRef.current ||
+                        !isPointInPolygon(
+                            latitude,
+                            longitude,
+                            boundaryRef.current
+                        )
                     ) {
                         alert(
-                            "Your location is outside Davao City. Please manually select a location within the blue boundary."
+                            "Your location is outside Davao City. Please select within the boundary."
                         );
                         return;
                     }
@@ -172,7 +230,7 @@ export function MapComponent({
             <div ref={mapContainerRef} className="w-full h-full z-0" />
 
             {/* Floating controls */}
-            <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+            <div className="absolute top-4 right-4 z-1000 flex flex-col gap-2">
                 <Button
                     onClick={handleMyLocation}
                     disabled={isAnalyzing}
@@ -196,7 +254,7 @@ export function MapComponent({
 
             {/* Layer selector panel */}
             {showLayers && (
-                <div className="absolute top-32 right-4 z-[1000] bg-white rounded-lg shadow-xl p-4 w-64">
+                <div className="absolute top-32 right-4 z-1000 bg-white rounded-lg shadow-xl p-4 w-64">
                     <h3 className="font-semibold mb-3 text-sm">Map Layers</h3>
                     <div className="space-y-2">
                         {[
@@ -251,7 +309,7 @@ export function MapComponent({
 
             {/* Loading overlay */}
             {isAnalyzing && (
-                <div className="absolute inset-0 bg-black/40 z-[999] flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 z-999 flex items-center justify-center">
                     <div className="bg-white rounded-lg p-6 shadow-xl flex items-center gap-3">
                         <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
                         <span className="font-medium">
@@ -263,7 +321,7 @@ export function MapComponent({
 
             {/* Instructions */}
             {!selectedLocation && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white rounded-lg shadow-xl p-4 max-w-md">
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-1000 bg-white rounded-lg shadow-xl p-4 max-w-md">
                     <p className="text-sm text-center">
                         <strong>Click anywhere on the map</strong> within the
                         blue boundary (Davao City) to analyze flood risk, or use{" "}
