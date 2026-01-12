@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiskGauge } from "@/components/risk-gauge";
 import { FactorAnalysis } from "@/components/factor-analysis";
+import { ModelComparison } from "@/components/model-comparison";
 import { ArrowLeft, Download, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/result")({
@@ -21,7 +22,8 @@ function ResultComponent() {
     const { lat, lng, data } = Route.useSearch();
 
     const result = JSON.parse(data);
-    const { factors, prediction, factorImportance, timestamp } = result;
+    const { factors, prediction, baselineRF, factorImportance, timestamp } =
+        result;
 
     const handleBack = () => {
         navigate({ to: "/" });
@@ -182,7 +184,13 @@ function ResultComponent() {
                     </div>
 
                     {/* Right Column - Factor Analysis */}
-                    <div className="lg:col-span-2">
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Model Comparison - Show first */}
+                        <ModelComparison
+                            baselineRF={baselineRF}
+                            ensemble={prediction}
+                        />
+
                         <FactorAnalysis
                             factors={factors}
                             importanceList={factorImportance}
