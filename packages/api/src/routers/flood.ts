@@ -12,50 +12,6 @@ import { RandomForestModel } from "../models/RandomForestModel";
 const ensemblePredictor = new EnsemblePredictor();
 const baselineRF = new RandomForestModel(100);
 
-// Davao City mainland boundary polygon (approximate, excluding Samal)
-const DAVAO_MAINLAND_POLYGON: Array<[number, number]> = [
-    [6.96, 125.36],
-    [6.95, 125.45],
-    [6.97, 125.52],
-    [6.98, 125.58],
-    [6.99, 125.63],
-    [7.02, 125.65],
-    [7.08, 125.66],
-    [7.12, 125.67],
-    [7.18, 125.66],
-    [7.22, 125.64],
-    [7.25, 125.6],
-    [7.25, 125.56],
-    [7.23, 125.52],
-    [7.21, 125.49],
-    [7.18, 125.46],
-    [7.14, 125.44],
-    [7.1, 125.42],
-    [7.06, 125.4],
-    [7.02, 125.38],
-    [6.98, 125.37],
-    [6.96, 125.36],
-];
-
-function isPointInPolygon(
-    lat: number,
-    lng: number,
-    poly: Array<[number, number]>
-) {
-    let inside = false;
-    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-        const xi = poly[i][1],
-            yi = poly[i][0];
-        const xj = poly[j][1],
-            yj = poly[j][0];
-        const intersect =
-            yi > lat !== yj > lat &&
-            lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
-        if (intersect) inside = !inside;
-    }
-    return inside;
-}
-
 export const floodRouter = router({
     /**
      * Analyze flood risk for a given location
@@ -66,7 +22,7 @@ export const floodRouter = router({
                 latitude: z
                     .number()
                     .min(6.8)
-                    .max(7.5)
+                    .max(7.6)
                     .describe("Latitude (Davao City region)"),
                 longitude: z
                     .number()
@@ -76,18 +32,7 @@ export const floodRouter = router({
             })
         )
         .mutation(async ({ input }) => {
-            // Guard: ensure location is within Davao mainland polygon
-            if (
-                !isPointInPolygon(
-                    input.latitude,
-                    input.longitude,
-                    DAVAO_MAINLAND_POLYGON
-                )
-            ) {
-                throw new Error(
-                    "Location is outside Davao City mainland bounds (lat 6.95–7.25, lng 125.35–125.67)"
-                );
-            }
+            // Note: Boundary validation is handled by the frontend using the official GeoJSON
             const location: Location = {
                 latitude: input.latitude,
                 longitude: input.longitude,
