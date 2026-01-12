@@ -146,7 +146,7 @@ importers:
         specifier: ^1.9.21
         version: 1.9.21
       axios:
-        specifier: ^1.13.2
+        specifier: ^1.7.9
         version: 1.13.2
       class-variance-authority:
         specifier: ^0.7.1
