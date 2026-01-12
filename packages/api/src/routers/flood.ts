@@ -10,7 +10,6 @@ import { RandomForestModel } from "../models/RandomForestModel";
 
 // Create singleton instances
 const ensemblePredictor = new EnsemblePredictor();
-const baselineRF = new RandomForestModel(100);
 
 export const floodRouter = router({
     /**
@@ -195,32 +194,6 @@ export const floodRouter = router({
             trainingArea: "Davao City, Mindanao, Philippines",
         };
     }),
-
-    /**
-     * Validate if a location is within Davao City bounds
-     */
-    validateLocation: publicProcedure
-        .input(
-            z.object({
-                latitude: z.number(),
-                longitude: z.number(),
-            })
-        )
-        .query(({ input }) => {
-            const isInDavaoCity = isPointInPolygon(
-                input.latitude,
-                input.longitude,
-                DAVAO_MAINLAND_POLYGON
-            );
-
-            return {
-                valid: isInDavaoCity,
-                location: input,
-                message: isInDavaoCity
-                    ? "Location is within Davao City mainland bounds (lat 6.95–7.25, lng 125.35–125.67)"
-                    : "Location is outside Davao City. Analysis limited to Davao City area.",
-            };
-        }),
 
     /**
      * Get known flood-prone areas in Davao City
