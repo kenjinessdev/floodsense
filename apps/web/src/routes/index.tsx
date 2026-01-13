@@ -43,6 +43,9 @@ function generateMockAnalysis(lat: number, lng: number) {
     };
 
     const ensembleProb = baselineProb + 0.03 + Math.random() * 0.05;
+    const rfProb = baselineProb * 0.45;
+    const xgbProb = ensembleProb - rfProb;
+
     const prediction = {
         riskLevel:
             ensembleProb < 0.3
@@ -56,8 +59,8 @@ function generateMockAnalysis(lat: number, lng: number) {
         confidence: 0.8 + Math.random() * 0.12,
         modelType: "Ensemble" as const,
         auc: 0.87,
-        rfComponent: baselineProb * 0.45,
-        xgboostComponent: (ensembleProb - baselineProb * 0.45) / 0.55,
+        rfProbability: rfProb,
+        xgbProbability: xgbProb,
     };
 
     const factorImportance = [

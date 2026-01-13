@@ -49,56 +49,6 @@ export function FactorAnalysis({
 
     return (
         <div className="space-y-6">
-            {/* Key Risk Factors */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">
-                        🎯 Key Risk Factors
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {importanceList.length > 0 ? (
-                        <div className="space-y-3">
-                            {importanceList.map((item, idx) => (
-                                <div
-                                    key={idx}
-                                    className={`p-4 rounded-lg border-2 ${getRiskBadgeColor(
-                                        item.risk
-                                    )}`}
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <span className="text-2xl">
-                                            {item.icon}
-                                        </span>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="font-semibold">
-                                                    {item.factor}
-                                                </span>
-                                                <span
-                                                    className={`text-xs px-2 py-1 rounded-full border ${getRiskBadgeColor(
-                                                        item.risk
-                                                    )}`}
-                                                >
-                                                    {item.risk}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm">
-                                                {item.message}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-gray-600 text-sm">
-                            No critical risk factors detected at this location.
-                        </p>
-                    )}
-                </CardContent>
-            </Card>
-
             {/* All Conditioning Factors */}
             <Card>
                 <CardHeader>

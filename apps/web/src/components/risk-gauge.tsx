@@ -57,50 +57,13 @@ export function RiskGauge({
 
     return (
         <div className="flex flex-col items-center gap-6">
-            {/* Gauge SVG */}
-            <div className="relative">
-                <svg
-                    width="200"
-                    height="150"
-                    viewBox="0 0 200 150"
-                    className="transform -rotate-[135deg]"
-                >
-                    {/* Background arc */}
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r={radius}
-                        fill="none"
-                        stroke="#e5e7eb"
-                        strokeWidth="16"
-                        strokeDasharray={`${arcLength} ${circumference}`}
-                        strokeLinecap="round"
-                    />
-                    {/* Progress arc */}
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r={radius}
-                        fill="none"
-                        className={getGaugeColor()}
-                        strokeWidth="16"
-                        strokeDasharray={`${arcLength} ${circumference}`}
-                        strokeDashoffset={offset}
-                        strokeLinecap="round"
-                        style={{
-                            transition: "stroke-dashoffset 1s ease-in-out",
-                        }}
-                    />
-                </svg>
-
-                {/* Center text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pt-8">
-                    <div className={`text-5xl font-bold ${getGaugeFill()}`}>
-                        {percentage}%
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">
-                        Susceptibility
-                    </div>
+            {/* Percentage Display */}
+            <div className="text-center py-4">
+                <div className={`text-6xl font-bold ${getGaugeFill()}`}>
+                    {percentage}%
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    Susceptibility
                 </div>
             </div>
 
