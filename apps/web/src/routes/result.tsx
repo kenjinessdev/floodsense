@@ -56,29 +56,6 @@ function ResultComponent() {
         URL.revokeObjectURL(url);
     };
 
-    const handleShare = async () => {
-        const shareText = `Flood Risk Assessment for location ${lat.toFixed(
-            4
-        )}, ${lng.toFixed(4)}: ${prediction.riskLevel} Risk (${Math.round(
-            prediction.probability * 100
-        )}% susceptibility)`;
-
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: "Davao FloodSense Assessment",
-                    text: shareText,
-                });
-            } catch (error) {
-                console.log("Share cancelled or failed", error);
-            }
-        } else {
-            // Fallback: copy to clipboard
-            navigator.clipboard.writeText(shareText);
-            alert("Assessment summary copied to clipboard!");
-        }
-    };
-
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
             {/* Header */}
@@ -123,43 +100,6 @@ function ResultComponent() {
                                     confidence={prediction.confidence}
                                 />
 
-                                {/* Model Details */}
-                                <div className="mt-6 pt-6 border-t space-y-2 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">
-                                            Random Forest:
-                                        </span>
-                                        <span className="font-medium">
-                                            {Math.round(
-                                                prediction.rfProbability * 100
-                                            )}
-                                            %
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">
-                                            XGBoost:
-                                        </span>
-                                        <span className="font-medium">
-                                            {Math.round(
-                                                prediction.xgbProbability * 100
-                                            )}
-                                            %
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between border-t pt-2">
-                                        <span className="text-gray-600">
-                                            Ensemble:
-                                        </span>
-                                        <span className="font-semibold">
-                                            {Math.round(
-                                                prediction.probability * 100
-                                            )}
-                                            %
-                                        </span>
-                                    </div>
-                                </div>
-
                                 {/* Action Buttons */}
                                 <div className="mt-6 space-y-2">
                                     <Button
@@ -169,14 +109,6 @@ function ResultComponent() {
                                     >
                                         <Download className="mr-2 h-4 w-4" />
                                         Download Report
-                                    </Button>
-                                    <Button
-                                        onClick={handleShare}
-                                        variant="outline"
-                                        className="w-full border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
-                                    >
-                                        <Share2 className="mr-2 h-4 w-4" />
-                                        Share Results
                                     </Button>
                                 </div>
                             </CardContent>
