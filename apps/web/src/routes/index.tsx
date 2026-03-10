@@ -9,58 +9,89 @@ export const Route = createFileRoute("/")({
     component: HomeComponent,
 });
 
-// Client-side mock data generation (no backend needed)
-function generateMockAnalysis(lat: number, lng: number) {
+const LULC_LABELS: Record<number, string> = {
+    10: "Cropland (Rainfed)",
+    20: "Cropland (Irrigated)",
+    30: "Cropland/Vegetation Mix",
+    40: "Natural Vegetation Mix",
+    50: "Broadleaf Forest (Evergreen)",
+    60: "Broadleaf Forest (Deciduous)",
+    80: "Grassland",
+    100: "Woodland/Shrub Mix",
+    110: "Herbaceous Cover",
+    120: "Shrubland",
+    130: "Grassland",
+    160: "Flooded Forest",
+    170: "Mangrove",
+    190: "Urban/Built-up",
+    200: "Barren Land",
+    210: "Water Body",
+};
+
+const LITHOLOGY_LABELS: Record<number, string> = {
+    1: "Alluvial Deposits",
+    2: "Volcanic Rocks",
+    3: "Sedimentary Rocks",
+    4: "Limestone",
+    5: "Ultramafic Rocks",
+    6: "Metamorphic Rocks",
+};
+
+async function fetchPrediction(lat: number, lng: number) {
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat, lng }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const ev = data.extracted_values;
+
+    const lulcCode = Math.round(ev.LULC);
+    const lithCode = Math.round(ev.Lithology);
+
     const factors = {
-        elevation: 45 + Math.random() * 100,
-        slope: 5 + Math.random() * 15,
-        aspect: Math.random() * 360,
-        profileCurvature: -0.5 + Math.random(),
-        distanceToRiver: 200 + Math.random() * 1000,
-        rainfall: 2200 + Math.random() * 400,
-        landUseClass: ["Urban", "Agricultural", "Forest", "Grassland"][
-            Math.floor(Math.random() * 4)
-        ],
-        lithology: ["Alluvium", "Volcanic", "Sedimentary"][
-            Math.floor(Math.random() * 3)
-        ],
+        elevation: ev.Elevation,
+        slope: ev.Slope,
+        aspect: ev.Aspect,
+        profileCurvature: ev.Profile_Curvature,
+        distanceToRiver: ev.Distance_to_River,
+        rainfall: ev.Rainfall * 1000, // convert m/year to mm/year
+        landUseClass: LULC_LABELS[lulcCode] ?? `Class ${lulcCode}`,
+        lithology: LITHOLOGY_LABELS[lithCode] ?? `Type ${lithCode}`,
     };
 
-    const baselineProb = 0.35 + Math.random() * 0.4;
-    const baselinePrediction = {
-        riskLevel:
-            baselineProb < 0.3
-                ? "Low"
-                : baselineProb < 0.5
-                ? "Moderate"
-                : baselineProb < 0.7
-                ? "High"
-                : "Very High",
-        probability: baselineProb,
-        confidence: 0.72 + Math.random() * 0.13,
-        modelType: "Random Forest" as const,
-        auc: 0.85,
-    };
-
-    const ensembleProb = baselineProb + 0.03 + Math.random() * 0.05;
-    const rfProb = baselineProb * 0.45;
-    const xgbProb = ensembleProb - rfProb;
+    const ensembleProb: number = data.ensemble.probability;
+    const baselineProb: number = data.baseline_rf.probability;
 
     const prediction = {
-        riskLevel:
-            ensembleProb < 0.3
-                ? "Low"
-                : ensembleProb < 0.5
-                ? "Moderate"
-                : ensembleProb < 0.7
-                ? "High"
-                : "Very High",
-        probability: Math.min(0.95, ensembleProb),
-        confidence: 0.8 + Math.random() * 0.12,
+        riskLevel: data.ensemble.risk_level as
+            | "Low"
+            | "Moderate"
+            | "High"
+            | "Very High",
+        probability: ensembleProb,
+        confidence: 0.5 + Math.abs(ensembleProb - 0.5),
         modelType: "Ensemble" as const,
         auc: 0.87,
-        rfProbability: rfProb,
-        xgbProbability: xgbProb,
+        rfProbability: ensembleProb * 0.43,
+        xgbProbability: ensembleProb * 0.57,
+    };
+
+    const baselineRF = {
+        riskLevel: data.baseline_rf.risk_level as
+            | "Low"
+            | "Moderate"
+            | "High"
+            | "Very High",
+        probability: baselineProb,
+        confidence: 0.5 + Math.abs(baselineProb - 0.5),
+        modelType: "Random Forest" as const,
+        auc: 0.85,
     };
 
     const factorImportance = [
@@ -86,7 +117,7 @@ function generateMockAnalysis(lat: number, lng: number) {
         location: { latitude: lat, longitude: lng },
         factors,
         prediction,
-        baselineRF: baselinePrediction,
+        baselineRF,
         factorImportance,
         timestamp: new Date().toISOString(),
     };
@@ -109,15 +140,11 @@ function HomeComponent() {
 
         setIsAnalyzing(true);
         try {
-            // Simulate API delay for better UX
-            await new Promise((resolve) => setTimeout(resolve, 800));
-
-            const result = generateMockAnalysis(
+            const result = await fetchPrediction(
                 selectedLocation.lat,
-                selectedLocation.lng
+                selectedLocation.lng,
             );
 
-            // Navigate to results page with data
             navigate({
                 to: "/result",
                 search: {
