@@ -4,48 +4,53 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
-interface Factor {
-    factor: string;
-    value: number;
-    risk: "Low" | "Moderate" | "High" | "Critical";
-    message: string;
-    icon: string;
-}
+const LULC_LABELS: Record<number, string> = {
+    10: "Cropland (Rainfed)",
+    20: "Cropland (Irrigated)",
+    30: "Cropland/Vegetation Mix",
+    40: "Natural Vegetation Mix",
+    50: "Broadleaf Forest (Evergreen)",
+    60: "Broadleaf Forest (Deciduous)",
+    80: "Grassland",
+    100: "Woodland/Shrub Mix",
+    110: "Herbaceous Cover",
+    120: "Shrubland",
+    130: "Grassland",
+    160: "Flooded Forest",
+    170: "Mangrove",
+    190: "Urban/Built-up",
+    200: "Barren Land",
+    210: "Water Body",
+};
 
-interface GeoFactors {
-    elevation: number;
-    slope: number;
-    aspect: number;
-    profileCurvature: number;
-    distanceToRiver: number;
-    rainfall: number;
-    landUseClass: string;
-    lithology: string;
+const LITHOLOGY_LABELS: Record<number, string> = {
+    1: "Alluvial Deposits",
+    2: "Volcanic Rocks",
+    3: "Sedimentary Rocks",
+    4: "Limestone",
+    5: "Ultramafic Rocks",
+    6: "Metamorphic Rocks",
+};
+
+interface ExtractedValues {
+    Elevation: number;
+    Rainfall: number;
+    Slope: number;
+    Profile_Curvature: number;
+    LULC: number;
+    Lithology: number;
+    Distance_to_River: number;
+    Aspect: number;
 }
 
 interface FactorAnalysisProps {
-    factors: GeoFactors;
-    importanceList: Factor[];
+    extractedValues: ExtractedValues;
 }
 
-export function FactorAnalysis({
-    factors,
-    importanceList,
-}: FactorAnalysisProps) {
-    const getRiskBadgeColor = (risk: string) => {
-        switch (risk) {
-            case "Critical":
-                return "bg-red-100 text-red-800 border-red-300";
-            case "High":
-                return "bg-orange-100 text-orange-800 border-orange-300";
-            case "Moderate":
-                return "bg-yellow-100 text-yellow-800 border-yellow-300";
-            case "Low":
-                return "bg-green-100 text-green-800 border-green-300";
-            default:
-                return "bg-gray-100 text-gray-800 border-gray-300";
-        }
-    };
+export function FactorAnalysis({ extractedValues: ev }: FactorAnalysisProps) {
+    const lulcCode = Math.round(ev.LULC);
+    const lithCode = Math.round(ev.Lithology);
+    const rainfallMm = ev.Rainfall * 1000; // convert m/year → mm/year
 
     return (
         <div className="space-y-6">
@@ -60,49 +65,51 @@ export function FactorAnalysis({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FactorItem
                             label="Elevation"
-                            value={`${Math.round(factors.elevation)}m`}
+                            value={`${Math.round(ev.Elevation)}m`}
                             icon="⬆️"
                             description="Height above sea level"
                         />
                         <FactorItem
                             label="Slope Gradient"
-                            value={`${factors.slope.toFixed(1)}°`}
+                            value={`${ev.Slope.toFixed(2)}°`}
                             icon="📐"
                             description="Terrain inclination"
                         />
                         <FactorItem
                             label="Aspect"
-                            value={`${Math.round(factors.aspect)}°`}
+                            value={`${ev.Aspect.toFixed(2)}°`}
                             icon="🧭"
                             description="Direction of slope"
                         />
                         <FactorItem
                             label="Profile Curvature"
-                            value={factors.profileCurvature.toFixed(2)}
+                            value={ev.Profile_Curvature.toExponential(3)}
                             icon="🏞️"
                             description="Terrain concavity/convexity"
                         />
                         <FactorItem
                             label="Distance to River"
-                            value={`${Math.round(factors.distanceToRiver)}m`}
+                            value={`${Math.round(ev.Distance_to_River)}m`}
                             icon="🌊"
                             description="Proximity to waterways"
                         />
                         <FactorItem
                             label="Annual Rainfall"
-                            value={`${Math.round(factors.rainfall)}mm`}
+                            value={`${Math.round(rainfallMm)}mm`}
                             icon="🌧️"
                             description="Regional precipitation"
                         />
                         <FactorItem
                             label="Land Use"
-                            value={factors.landUseClass}
+                            value={LULC_LABELS[lulcCode] ?? `Class ${lulcCode}`}
                             icon="🏢"
                             description="LULC classification"
                         />
                         <FactorItem
                             label="Lithology"
-                            value={factors.lithology}
+                            value={
+                                LITHOLOGY_LABELS[lithCode] ?? `Type ${lithCode}`
+                            }
                             icon="🪨"
                             description="Geological composition"
                         />

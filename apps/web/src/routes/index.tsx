@@ -9,156 +9,26 @@ export const Route = createFileRoute("/")({
     component: HomeComponent,
 });
 
-const LULC_LABELS: Record<number, string> = {
-    10: "Cropland (Rainfed)",
-    20: "Cropland (Irrigated)",
-    30: "Cropland/Vegetation Mix",
-    40: "Natural Vegetation Mix",
-    50: "Broadleaf Forest (Evergreen)",
-    60: "Broadleaf Forest (Deciduous)",
-    80: "Grassland",
-    100: "Woodland/Shrub Mix",
-    110: "Herbaceous Cover",
-    120: "Shrubland",
-    130: "Grassland",
-    160: "Flooded Forest",
-    170: "Mangrove",
-    190: "Urban/Built-up",
-    200: "Barren Land",
-    210: "Water Body",
-};
-
-const LITHOLOGY_LABELS: Record<number, string> = {
-    1: "Alluvial Deposits",
-    2: "Volcanic Rocks",
-    3: "Sedimentary Rocks",
-    4: "Limestone",
-    5: "Ultramafic Rocks",
-    6: "Metamorphic Rocks",
-};
-
-async function fetchPrediction(lat: number, lng: number) {
-    const response = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lat, lng }),
-    });
-
-    if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const ev = data.extracted_values;
-
-    const lulcCode = Math.round(ev.LULC);
-    const lithCode = Math.round(ev.Lithology);
-
-    const factors = {
-        elevation: ev.Elevation,
-        slope: ev.Slope,
-        aspect: ev.Aspect,
-        profileCurvature: ev.Profile_Curvature,
-        distanceToRiver: ev.Distance_to_River,
-        rainfall: ev.Rainfall * 1000, // convert m/year to mm/year
-        landUseClass: LULC_LABELS[lulcCode] ?? `Class ${lulcCode}`,
-        lithology: LITHOLOGY_LABELS[lithCode] ?? `Type ${lithCode}`,
-    };
-
-    const ensembleProb: number = data.ensemble.probability;
-    const baselineProb: number = data.baseline_rf.probability;
-
-    const prediction = {
-        riskLevel: data.ensemble.risk_level as
-            | "Low"
-            | "Moderate"
-            | "High"
-            | "Very High",
-        probability: ensembleProb,
-        confidence: 0.5 + Math.abs(ensembleProb - 0.5),
-        modelType: "Ensemble" as const,
-        auc: 0.87,
-        rfProbability: ensembleProb * 0.43,
-        xgbProbability: ensembleProb * 0.57,
-    };
-
-    const baselineRF = {
-        riskLevel: data.baseline_rf.risk_level as
-            | "Low"
-            | "Moderate"
-            | "High"
-            | "Very High",
-        probability: baselineProb,
-        confidence: 0.5 + Math.abs(baselineProb - 0.5),
-        modelType: "Random Forest" as const,
-        auc: 0.85,
-    };
-
-    const factorImportance = [
-        {
-            factor: "Distance to River",
-            importance: 0.28,
-            impact: "high" as const,
-        },
-        { factor: "Rainfall", importance: 0.22, impact: "high" as const },
-        { factor: "Elevation", importance: 0.18, impact: "medium" as const },
-        { factor: "Slope", importance: 0.14, impact: "medium" as const },
-        { factor: "Land Use", importance: 0.09, impact: "low" as const },
-        {
-            factor: "Profile Curvature",
-            importance: 0.05,
-            impact: "low" as const,
-        },
-        { factor: "Aspect", importance: 0.03, impact: "low" as const },
-        { factor: "Lithology", importance: 0.01, impact: "low" as const },
-    ];
-
-    return {
-        location: { latitude: lat, longitude: lng },
-        factors,
-        prediction,
-        baselineRF,
-        factorImportance,
-        timestamp: new Date().toISOString(),
-    };
-}
-
 function HomeComponent() {
     const navigate = useNavigate();
     const [selectedLocation, setSelectedLocation] = useState<{
         lat: number;
         lng: number;
     } | null>(null);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const handleLocationSelect = (lat: number, lng: number) => {
         setSelectedLocation({ lat, lng });
     };
 
-    const handleAnalyze = async () => {
+    const handleAnalyze = () => {
         if (!selectedLocation) return;
-
-        setIsAnalyzing(true);
-        try {
-            const result = await fetchPrediction(
-                selectedLocation.lat,
-                selectedLocation.lng,
-            );
-
-            navigate({
-                to: "/result",
-                search: {
-                    lat: selectedLocation.lat,
-                    lng: selectedLocation.lng,
-                    data: JSON.stringify(result),
-                },
-            });
-        } catch (error) {
-            console.error("Analysis failed:", error);
-            alert("Failed to analyze location. Please try again.");
-        } finally {
-            setIsAnalyzing(false);
-        }
+        navigate({
+            to: "/result",
+            search: {
+                lat: selectedLocation.lat,
+                lng: selectedLocation.lng,
+            },
+        });
     };
 
     return (
@@ -193,7 +63,7 @@ function HomeComponent() {
                     <MapComponent
                         onLocationSelect={handleLocationSelect}
                         selectedLocation={selectedLocation}
-                        isAnalyzing={isAnalyzing}
+                        isAnalyzing={false}
                     />
                 </div>
 
@@ -234,13 +104,10 @@ function HomeComponent() {
                                     </div>
                                     <Button
                                         onClick={handleAnalyze}
-                                        disabled={isAnalyzing}
                                         className="w-full mt-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200"
                                         size="lg"
                                     >
-                                        {isAnalyzing
-                                            ? "Analyzing..."
-                                            : "Analyze Location"}
+                                        Analyze Location
                                     </Button>
                                 </CardContent>
                             </Card>

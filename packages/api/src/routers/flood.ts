@@ -3,6 +3,7 @@
  */
 
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "../index";
 import { GeoFactor, type Location } from "../models/GeoFactor";
 import { EnsemblePredictor } from "../models/EnsemblePredictor";
@@ -11,7 +12,93 @@ import { RandomForestModel } from "../models/RandomForestModel";
 // Create singleton instances
 const ensemblePredictor = new EnsemblePredictor();
 
+const PREDICT_API_URL =
+    process.env["PREDICT_API_URL"] ?? "http://127.0.0.1:8000/predict";
+
+const ModelPredictionSchema = z.object({
+    prediction: z.number(),
+    probability: z.number(),
+    risk_level: z.string(),
+    risk_color: z.string(),
+    label: z.string(),
+    override: z.boolean(),
+    override_reason: z.string().nullable(),
+});
+
+export const PredictResponseSchema = z.object({
+    coordinates: z.object({ lat: z.number(), lng: z.number() }),
+    extracted_values: z.object({
+        Elevation: z.number(),
+        Rainfall: z.number(),
+        Slope: z.number(),
+        Profile_Curvature: z.number(),
+        LULC: z.number(),
+        Lithology: z.number(),
+        Distance_to_River: z.number(),
+        Aspect: z.number(),
+    }),
+    baseline_rf: ModelPredictionSchema,
+    ensemble: ModelPredictionSchema,
+});
+
+export type PredictResponse = z.infer<typeof PredictResponseSchema>;
+export type ModelPrediction = z.infer<typeof ModelPredictionSchema>;
+
 export const floodRouter = router({
+    /**
+     * Predict flood risk for a given location via the ML backend.
+     * Returns the raw API response shape - no data transformation.
+     */
+    predict: publicProcedure
+        .input(
+            z.object({
+                latitude: z
+                    .number()
+                    .min(6.8)
+                    .max(7.6)
+                    .describe("Latitude (Davao City region)"),
+                longitude: z
+                    .number()
+                    .min(125.2)
+                    .max(125.8)
+                    .describe("Longitude (Davao City region)"),
+            }),
+        )
+        .output(PredictResponseSchema)
+        .query(async ({ input }) => {
+            const response = await fetch(PREDICT_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    lat: input.latitude,
+                    lng: input.longitude,
+                }),
+            }).catch(() => {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Prediction service is unavailable.",
+                });
+            });
+
+            if (!response.ok) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: `Prediction service returned ${response.status}.`,
+                });
+            }
+
+            const raw = await response.json();
+            const parsed = PredictResponseSchema.safeParse(raw);
+            if (!parsed.success) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message:
+                        "Unexpected response shape from prediction service.",
+                });
+            }
+            return parsed.data;
+        }),
+
     /**
      * Analyze flood risk for a given location
      */
@@ -28,7 +115,7 @@ export const floodRouter = router({
                     .min(125.2)
                     .max(125.8)
                     .describe("Longitude (Davao City region)"),
-            })
+            }),
         )
         .mutation(async ({ input }) => {
             // Note: Boundary validation is handled by the frontend using the official GeoJSON
@@ -60,10 +147,10 @@ export const floodRouter = router({
                     baselineProb < 0.3
                         ? "Low"
                         : baselineProb < 0.5
-                        ? "Moderate"
-                        : baselineProb < 0.7
-                        ? "High"
-                        : "Very High",
+                          ? "Moderate"
+                          : baselineProb < 0.7
+                            ? "High"
+                            : "Very High",
                 probability: baselineProb,
                 confidence: 0.72 + Math.random() * 0.13,
                 modelType: "Random Forest" as const,
@@ -77,10 +164,10 @@ export const floodRouter = router({
                     ensembleProb < 0.3
                         ? "Low"
                         : ensembleProb < 0.5
-                        ? "Moderate"
-                        : ensembleProb < 0.7
-                        ? "High"
-                        : "Very High",
+                          ? "Moderate"
+                          : ensembleProb < 0.7
+                            ? "High"
+                            : "Very High",
                 probability: Math.min(0.95, ensembleProb),
                 confidence: 0.8 + Math.random() * 0.12,
                 modelType: "Ensemble" as const,
@@ -157,7 +244,7 @@ export const floodRouter = router({
                     "landUseClass",
                     "lithology",
                 ]),
-            })
+            }),
         )
         .query(async ({ input }) => {
             const location: Location = {
