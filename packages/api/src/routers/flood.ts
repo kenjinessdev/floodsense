@@ -66,6 +66,9 @@ export const floodRouter = router({
         )
         .output(PredictResponseSchema)
         .query(async ({ input }) => {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15_000);
+
             const response = await fetch(PREDICT_API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -73,12 +76,19 @@ export const floodRouter = router({
                     lat: input.latitude,
                     lng: input.longitude,
                 }),
-            }).catch(() => {
-                throw new TRPCError({
-                    code: "INTERNAL_SERVER_ERROR",
-                    message: "Prediction service is unavailable.",
-                });
-            });
+                signal: controller.signal,
+            })
+                .catch((err: unknown) => {
+                    const isTimeout =
+                        err instanceof Error && err.name === "AbortError";
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: isTimeout
+                            ? "Prediction service timed out. Please try again."
+                            : "Prediction service is unavailable.",
+                    });
+                })
+                .finally(() => clearTimeout(timeout));
 
             if (!response.ok) {
                 throw new TRPCError({

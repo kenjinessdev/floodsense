@@ -104,7 +104,8 @@ function HomeComponent() {
                                     </div>
                                     <Button
                                         onClick={handleAnalyze}
-                                        className="w-full mt-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200"
+                                        disabled={!selectedLocation}
+                                        className="w-full mt-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                         size="lg"
                                     >
                                         Analyze Location

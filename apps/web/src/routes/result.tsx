@@ -10,8 +10,8 @@ import { trpc } from "@/utils/trpc";
 import { ArrowLeft, Download, AlertCircle } from "lucide-react";
 
 const searchSchema = z.object({
-    lat: z.number(),
-    lng: z.number(),
+    lat: z.number().finite().min(6.8).max(7.6),
+    lng: z.number().finite().min(125.2).max(125.8),
 });
 
 export const Route = createFileRoute("/result")({
@@ -28,6 +28,18 @@ function ResultComponent() {
             { latitude: lat, longitude: lng },
             { retry: 1, staleTime: 5 * 60 * 1000 },
         );
+
+    const errorMessage = (() => {
+        if (!error) return "An unexpected error occurred.";
+        if (error.data?.code === "BAD_REQUEST")
+            return "The selected coordinates are outside the supported Davao City region (lat 6.8–7.6, lng 125.2–125.8).";
+        if (
+            error.message.includes("unavailable") ||
+            error.data?.code === "INTERNAL_SERVER_ERROR"
+        )
+            return "The prediction service is currently unavailable. Please try again later.";
+        return error.message;
+    })();
 
     const handleBack = () => navigate({ to: "/" });
 
@@ -91,8 +103,7 @@ function ResultComponent() {
                                     Failed to load prediction
                                 </p>
                                 <p className="text-sm text-red-700 dark:text-red-400 mt-1">
-                                    {error?.message ??
-                                        "An unexpected error occurred."}
+                                    {errorMessage}
                                 </p>
                                 <Button
                                     onClick={() => refetch()}
