@@ -55,14 +55,14 @@ export function FactorAnalysis({ extractedValues: ev }: FactorAnalysisProps) {
     return (
         <div className="space-y-6">
             {/* All Conditioning Factors */}
-            <Card>
+            <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
                 <CardHeader>
-                    <CardTitle className="text-lg">
+                    <CardTitle className="text-lg text-slate-800 dark:text-slate-100">
                         📊 All Conditioning Factors
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
                         <FactorItem
                             label="Elevation"
                             value={`${Math.round(ev.Elevation)}m`}
@@ -118,15 +118,15 @@ export function FactorAnalysis({ extractedValues: ev }: FactorAnalysisProps) {
             </Card>
 
             {/* Context Note */}
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50 shadow-sm">
                 <CardContent className="pt-6">
                     <div className="flex gap-3">
                         <span className="text-2xl">ℹ️</span>
                         <div className="flex-1">
-                            <h4 className="font-semibold mb-1 text-blue-900">
+                            <h4 className="font-semibold mb-1 text-blue-900 dark:text-blue-100">
                                 Regional Context
                             </h4>
-                            <p className="text-sm text-blue-800">
+                            <p className="text-sm text-blue-800 dark:text-blue-300">
                                 This analysis uses offline susceptibility data
                                 from the Davao City flood study. Rainfall data
                                 is sourced from Mindanao regional patterns. This
@@ -157,15 +157,19 @@ function FactorItem({
     description: string;
 }) {
     return (
-        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="flex items-center gap-2 mb-1">
-                <span>{icon}</span>
-                <span className="font-medium text-sm">{label}</span>
+        <div className="p-4 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-base">{icon}</span>
+                <span className="font-medium text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                    {label}
+                </span>
             </div>
-            <div className="text-lg font-semibold text-gray-900 mb-1">
+            <div className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight">
                 {value}
             </div>
-            <div className="text-xs text-gray-600">{description}</div>
+            <div className="text-xs text-slate-400 dark:text-slate-500">
+                {description}
+            </div>
         </div>
     );
 }

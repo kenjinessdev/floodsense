@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { MapPin, Layers, Loader2 } from "lucide-react";
 import { utmToWgs84 } from "@/lib/utm-converter";
@@ -42,7 +43,7 @@ export function MapComponent({
     const isPointInPolygon = (
         lat: number,
         lng: number,
-        poly: Array<[number, number]>
+        poly: Array<[number, number]>,
     ): boolean => {
         let inside = false;
         for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
@@ -127,9 +128,10 @@ export function MapComponent({
                 !boundaryRef.current ||
                 !isPointInPolygon(lat, lng, boundaryRef.current)
             ) {
-                alert(
-                    "Please select a location within the Davao City boundary"
-                );
+                toast.error("Outside Davao City", {
+                    description:
+                        "Please select a location within the Davao City boundary.",
+                });
                 return;
             }
 
@@ -175,7 +177,7 @@ export function MapComponent({
         Lat: ${selectedLocation.lat.toFixed(6)}<br/>
         Lng: ${selectedLocation.lng.toFixed(6)}
       </div>
-    `
+    `,
             )
             .openPopup();
 
@@ -193,12 +195,13 @@ export function MapComponent({
                         !isPointInPolygon(
                             latitude,
                             longitude,
-                            boundaryRef.current
+                            boundaryRef.current,
                         )
                     ) {
-                        alert(
-                            "Your location is outside Davao City. Please select within the boundary."
-                        );
+                        toast.error("Outside Davao City", {
+                            description:
+                                "Your location is outside Davao City. Please select a point within the boundary.",
+                        });
                         return;
                     }
 
@@ -207,15 +210,17 @@ export function MapComponent({
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
-                    alert(
-                        "Unable to get your location. Please click on the map to select a location."
-                    );
-                }
+                    toast.error("Location unavailable", {
+                        description:
+                            "Unable to get your location. Please click on the map to select a point.",
+                    });
+                },
             );
         } else {
-            alert(
-                "Geolocation is not supported by your browser. Please click on the map to select a location."
-            );
+            toast.error("Geolocation not supported", {
+                description:
+                    "Your browser does not support geolocation. Please click on the map to select a location.",
+            });
         }
     };
 

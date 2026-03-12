@@ -61,3 +61,48 @@ Platform: Web Application (Responsive for Desktop & Mobile)
    Analogy for the "Base Class" Requirement
    To explain your code structure to your adviser, you can use this analogy:
    "Think of the Base Classes like the blueprint for a house. The GeoFactor class is the foundation—it holds all the raw materials (elevation, slope, rainfall). The EnsemblePredictor is the architect that looks at two different sets of blueprints (RandomForest and XGBoost) and combines them into one final, stronger design. By separating these classes, our prototype is flexible—we can easily swap out the rainfall data or tweak the decision trees without breaking the whole app."
+
+# CORE DIRECTIVE: UI/UX MODERNIZATION AND AESTHETIC OVERHAUL
+
+You are an expert Frontend Engineer and UI/UX Designer. Your task is to refactor the existing user interface to be highly modern, aesthetically pleasing, and professional. The application is an analytical dashboard for flood risk assessment, so the design must be clean, trustworthy, and data-forward.
+
+Do NOT alter the underlying logic, data fetching, or routing. Focus strictly on layout, styling, and visual hierarchy.
+
+Apply the following design system rules to all components:
+
+## 1. DESIGN VIBE & PHILOSOPHY
+
+- **Target Aesthetic:** "Clean Dashboard" (similar to Vercel, Stripe, or Linear).
+- **Spaciousness:** Embrace whitespace. Increase padding inside cards and margins between sections to let the data breathe.
+- **Minimalist Borders:** Remove harsh, dark borders (`border-gray-300` or `border-black`). Replace them with very subtle, light borders (e.g., `border-gray-100`) or remove them entirely in favor of soft shadows.
+
+## 2. SURFACES, CARDS, & CONTAINERS
+
+- **Card Styling:** All data containers (like the Susceptibility score, Conditioning Factors, etc.) should use rounded corners (`rounded-xl` or `rounded-2xl`) and soft, diffused shadows (`shadow-sm` or `shadow-md`) to lift them off the background.
+- **Background Contrast:** Ensure the main app background is an off-white or very light gray (e.g., `#f8fafc` or `bg-slate-50`), while the cards are pure white (`bg-white`). This creates depth.
+- **Glassmorphism (Optional/Accents):** For map overlays (like the "How to use" box), consider using a subtle backdrop blur with semi-transparent white backgrounds (`bg-white/80 backdrop-blur-md`).
+
+## 3. TYPOGRAPHY & DATA HIERARCHY
+
+- **Visual Hierarchy:** Not all text is equal.
+    - Section titles should be bold and slightly larger, but use a dark slate color (e.g., `text-slate-800`), not pure black.
+    - Secondary text (descriptions, methodology, units like "mm" or "m") should be muted (`text-gray-500` or `text-slate-400`).
+- **Metric Emphasis:** For key numbers (like the "97% Flood Probability"), make the font massive and bold (`text-5xl` or `text-6xl`, `font-extrabold`), with tight tracking.
+- **Font Choice:** If possible, ensure a modern sans-serif font like Inter, Roboto, or system-ui is applied globally.
+
+## 4. COLOR & SEMANTICS
+
+- **Modern Semantic Colors:** Update the "Risk Level" colors to be modern and vibrant, but not blinding.
+    - **High Risk (Red):** Instead of a flat, harsh red, use a modern rose/red gradient or a polished solid like `bg-red-500` with a soft `shadow-red-500/30` glow.
+    - **Moderate (Yellow/Orange):** Use warm amber tones.
+    - **Low (Green):** Use emerald or teal tones.
+- **Badges/Pills:** For status indicators (like "Ensemble (RF + XGBoost)" or "High - Flooded"), style them as modern pill badges: heavily rounded (`rounded-full`), with a very light background and dark text of the same hue (e.g., `bg-red-100 text-red-700`).
+
+## 5. SPECIFIC COMPONENT INSTRUCTIONS
+
+- **Conditioning Factors Grid:** Transform this into a clean CSS Grid (`grid-cols-2` or `grid-cols-3` depending on screen size). Each factor should be a distinct, cohesive card with a unified icon style.
+- **Model Performance Comparison:** Clean up the visual separation between the Baseline and Improved models. Use subtle background colors to highlight the "Improved Model" as the preferred data point.
+
+---
+
+**OUTPUT INSTRUCTIONS:** When refactoring a component, explain briefly which specific modern UI principle (e.g., "improved visual hierarchy", "softened card surfaces") you applied to the code.

@@ -32,18 +32,23 @@ export function RiskGauge({
         <div className="flex flex-col items-center gap-6">
             {/* Percentage Display */}
             <div className="text-center py-4">
-                <div className={`text-6xl font-bold ${getTextColorClass()}`}>
+                <div
+                    className={`text-6xl font-extrabold tracking-tight ${getTextColorClass()}`}
+                >
                     {percentage}%
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                <div className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">
                     Flood Probability
                 </div>
             </div>
 
             {/* Risk Level Badge */}
             <div
-                className="px-8 py-3 rounded-full border-2 font-semibold text-lg text-white"
-                style={{ backgroundColor: riskColor, borderColor: riskColor }}
+                className="px-8 py-3 rounded-full font-semibold text-base text-white shadow-lg"
+                style={{
+                    backgroundColor: riskColor,
+                    boxShadow: `0 4px 14px ${riskColor}55`,
+                }}
             >
                 {riskLevel} — {label}
             </div>
@@ -55,22 +60,22 @@ export function RiskGauge({
             )}
 
             {/* Legend */}
-            <div className="grid grid-cols-2 gap-3 text-xs mt-2">
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <span>Low (0–25%)</span>
+            <div className="grid grid-cols-2 gap-2 text-xs mt-2 w-full">
+                <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 rounded-full px-3 py-1.5">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                    <span className="font-medium">Low (0–25%)</span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                    <span>Moderate (25–50%)</span>
+                <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 rounded-full px-3 py-1.5">
+                    <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                    <span className="font-medium">Moderate (25–50%)</span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-orange-500" />
-                    <span>High (50–75%)</span>
+                <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 rounded-full px-3 py-1.5">
+                    <div className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
+                    <span className="font-medium">High (50–75%)</span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                    <span>Very High (75–100%)</span>
+                <div className="flex items-center gap-2 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded-full px-3 py-1.5">
+                    <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                    <span className="font-medium">Very High (75–100%)</span>
                 </div>
             </div>
         </div>

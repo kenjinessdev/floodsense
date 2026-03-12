@@ -48,7 +48,6 @@ function HomeComponent() {
                         <Button
                             onClick={() => navigate({ to: "/about" })}
                             variant="outline"
-                            className="border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
                         >
                             About
                         </Button>
