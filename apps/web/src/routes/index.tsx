@@ -32,23 +32,23 @@ function HomeComponent() {
     };
 
     return (
-        <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-            {/* Header */}
-            <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60">
-                <div className="container mx-auto px-4 py-4">
+        <div className="h-svh flex flex-col bg-slate-50 dark:bg-slate-950">
+            {/* Header - compact on mobile */}
+            <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shrink-0">
+                <div className="px-4 py-2.5 md:py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                            <h1 className="text-lg md:text-3xl font-bold bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                                 🌊 Davao FloodSense
                             </h1>
-                            <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">
+                            <p className="hidden md:block text-sm text-slate-600 dark:text-slate-400 mt-0.5">
                                 Ensemble Risk Mapper for Davao City
                             </p>
                         </div>
                         <Button
                             onClick={() => navigate({ to: "/about" })}
                             variant="outline"
-                            className="border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
+                            size="sm"
                         >
                             About
                         </Button>
@@ -57,18 +57,54 @@ function HomeComponent() {
             </header>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                {/* Map Section */}
-                <div className="flex-1 relative">
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+                {/* Map — fills full area on mobile (overlay handles controls) */}
+                <div className="flex-1 relative min-h-0">
                     <MapComponent
                         onLocationSelect={handleLocationSelect}
                         selectedLocation={selectedLocation}
                         isAnalyzing={false}
                     />
+
+                    {/* Mobile bottom overlay panel */}
+                    <div className="md:hidden absolute bottom-0 left-0 right-0 z-1001 p-3 pointer-events-none">
+                        {selectedLocation ? (
+                            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 p-4 pointer-events-auto">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">
+                                            Selected Location
+                                        </p>
+                                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mt-0.5">
+                                            {selectedLocation.lat.toFixed(5)},{" "}
+                                            {selectedLocation.lng.toFixed(5)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <Button
+                                    onClick={handleAnalyze}
+                                    className="w-full bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30"
+                                    size="lg"
+                                >
+                                    Analyze Location
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl shadow-lg border border-slate-100 dark:border-slate-800 px-4 py-3 pointer-events-auto text-center">
+                                <p className="text-xs text-slate-600 dark:text-slate-400">
+                                    <strong className="text-slate-800 dark:text-slate-200">
+                                        Tap the map
+                                    </strong>{" "}
+                                    within the blue boundary to analyze flood
+                                    risk
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Sidebar */}
-                <div className="w-full md:w-96 bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 overflow-y-auto">
+                {/* Sidebar — desktop only */}
+                <div className="hidden md:flex md:w-96 bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 overflow-y-auto flex-col">
                     <div className="p-6 space-y-6">
                         {/* Title */}
                         <div>
@@ -83,7 +119,7 @@ function HomeComponent() {
 
                         {/* Location Info */}
                         {selectedLocation ? (
-                            <Card className="border-blue-200 dark:border-blue-900/50 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 shadow-lg shadow-blue-500/10">
+                            <Card className="border-blue-200 dark:border-blue-900/50 bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 shadow-lg shadow-blue-500/10">
                                 <CardHeader className="pb-3">
                                     <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">
                                         Selected Location
@@ -105,7 +141,7 @@ function HomeComponent() {
                                     <Button
                                         onClick={handleAnalyze}
                                         disabled={!selectedLocation}
-                                        className="w-full mt-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full mt-3 bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                         size="lg"
                                     >
                                         Analyze Location
@@ -113,10 +149,10 @@ function HomeComponent() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            <Card className="border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50">
-                                <CardContent className="pt-6">
+                            <Card className="border-slate-200 dark:border-slate-800 bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50">
+                                <CardContent>
                                     <div className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
-                                        <Info className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                                        <Info className="h-5 w-5 mt-0.5 shrink-0" />
                                         <div className="text-sm">
                                             <p className="font-medium mb-1">
                                                 How to use:
@@ -142,51 +178,9 @@ function HomeComponent() {
                             </Card>
                         )}
 
-                        {/* Model Info */}
-                        {/* {modelInfoQuery.data && (
-                            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                                        Model Information
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-xs">
-                                    <div>
-                                        <span className="font-semibold">
-                                            Algorithm:
-                                        </span>{" "}
-                                        {modelInfoQuery.data.modelType}
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold">
-                                            Method:
-                                        </span>{" "}
-                                        {modelInfoQuery.data.algorithm}
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold">
-                                            Accuracy:
-                                        </span>{" "}
-                                        {(
-                                            modelInfoQuery.data.accuracy
-                                                .ensemble * 100
-                                        ).toFixed(1)}
-                                        % (AUC)
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold">
-                                            Factors:
-                                        </span>{" "}
-                                        {modelInfoQuery.data.factorsUsed}{" "}
-                                        conditioning factors
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )} */}
-
                         {/* Disclaimer */}
-                        <Card className="border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
-                            <CardContent className="pt-6">
+                        <Card className="border-amber-200 dark:border-amber-900/50 bg-linear-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+                            <CardContent>
                                 <div className="flex items-start gap-3">
                                     <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 shrink-0" />
                                     <div className="text-xs text-amber-900 dark:text-amber-200">
@@ -208,27 +202,6 @@ function HomeComponent() {
                                 </div>
                             </CardContent>
                         </Card>
-
-                        {/* About */}
-                        {/* <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                                    About
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="text-xs text-slate-600 dark:text-slate-400 space-y-2">
-                                <p>
-                                    This application uses ensemble machine
-                                    learning (Random Forest + XGBoost) to assess
-                                    flood susceptibility in Davao City.
-                                </p>
-                                <p>
-                                    Based on research studying flash floods
-                                    caused by complex terrain and upstream
-                                    rainfall patterns in Mindanao.
-                                </p>
-                            </CardContent>
-                        </Card> */}
                     </div>
                 </div>
             </div>

@@ -44,7 +44,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootComponent() {
     return (
-        <>
+        <ThemeProvider defaultTheme="light" attribute="class">
             <HeadContent />
 
             <div className="grid grid-rows-[auto_1fr] h-svh">
@@ -57,6 +57,6 @@ function RootComponent() {
                 position="bottom"
                 buttonPosition="bottom-right"
             />
-        </>
+        </ThemeProvider>
     );
 }

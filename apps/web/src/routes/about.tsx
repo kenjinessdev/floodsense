@@ -12,13 +12,13 @@ function AboutComponent() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
             {/* Header */}
-            <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60">
+            <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-slate-950/60">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                            <h1 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                                 About FloodSense
                             </h1>
                             <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">
@@ -68,13 +68,13 @@ function AboutComponent() {
                     </Card>
 
                     {/* Scope and Limitations */}
-                    <Card className="border-amber-300 bg-amber-50">
+                    <Card className="border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20">
                         <CardHeader>
-                            <CardTitle className="text-amber-900">
+                            <CardTitle className="text-amber-900 dark:text-amber-200">
                                 ⚠️ Important: Scope and Limitations
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-3 text-amber-900">
+                        <CardContent className="space-y-3 text-amber-900 dark:text-amber-200">
                             <p className="font-semibold">
                                 This tool provides susceptibility mapping using
                                 offline data, NOT real-time forecasting.
@@ -104,27 +104,29 @@ function AboutComponent() {
                     </Card>
 
                     {/* Technology Stack */}
-                    <Card>
+                    <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
                         <CardHeader>
-                            <CardTitle>🔬 Technical Architecture</CardTitle>
+                            <CardTitle className="text-slate-800 dark:text-slate-100">
+                                🔬 Technical Architecture
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="font-semibold text-lg mb-2">
+                                    <h3 className="font-semibold text-lg mb-2 text-slate-800 dark:text-slate-100">
                                         Ensemble Machine Learning
                                     </h3>
-                                    <p className="text-sm text-gray-700 mb-2">
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                                         The application uses a hybrid ensemble
                                         approach combining two powerful
                                         algorithms:
                                     </p>
                                     <div className="grid md:grid-cols-2 gap-4 mt-3">
-                                        <div className="p-4 bg-blue-50 rounded-lg">
-                                            <h4 className="font-semibold text-blue-900 mb-2">
+                                        <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/50">
+                                            <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
                                                 Random Forest
                                             </h4>
-                                            <p className="text-xs text-blue-800">
+                                            <p className="text-xs text-blue-800 dark:text-blue-300">
                                                 <strong>Method:</strong> Bagging
                                                 (Bootstrap Aggregating)
                                                 <br />
@@ -138,11 +140,11 @@ function AboutComponent() {
                                                 0.85
                                             </p>
                                         </div>
-                                        <div className="p-4 bg-green-50 rounded-lg">
-                                            <h4 className="font-semibold text-green-900 mb-2">
+                                        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
+                                            <h4 className="font-semibold text-emerald-900 dark:text-emerald-200 mb-2">
                                                 XGBoost
                                             </h4>
-                                            <p className="text-xs text-green-800">
+                                            <p className="text-xs text-emerald-800 dark:text-emerald-300">
                                                 <strong>Method:</strong>{" "}
                                                 Gradient Boosting
                                                 <br />
@@ -157,11 +159,11 @@ function AboutComponent() {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="mt-3 p-4 bg-purple-50 rounded-lg">
-                                        <h4 className="font-semibold text-purple-900 mb-1">
+                                    <div className="mt-3 p-4 bg-purple-50 dark:bg-purple-950/30 rounded-xl border border-purple-100 dark:border-purple-900/50">
+                                        <h4 className="font-semibold text-purple-900 dark:text-purple-200 mb-1">
                                             Ensemble (Stacking)
                                         </h4>
-                                        <p className="text-xs text-purple-800">
+                                        <p className="text-xs text-purple-800 dark:text-purple-300">
                                             Combines both models using weighted
                                             averaging to achieve superior
                                             accuracy (AUC 0.87+), outperforming
@@ -249,11 +251,11 @@ function AboutComponent() {
                                     </p>
                                 </div>
 
-                                <div className="p-4 border-l-4 border-purple-500 bg-purple-50">
-                                    <h4 className="font-semibold text-purple-900 mb-1">
+                                <div className="p-4 border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-950/30 rounded-r-xl">
+                                    <h4 className="font-semibold text-purple-900 dark:text-purple-200 mb-1">
                                         EnsemblePredictor Class
                                     </h4>
-                                    <p className="text-xs text-purple-800">
+                                    <p className="text-xs text-purple-800 dark:text-purple-300">
                                         The core logic combining Random Forest
                                         and XGBoost predictions using stacking.
                                         Ensures models are trained only on
@@ -261,7 +263,7 @@ function AboutComponent() {
                                     </p>
                                 </div>
 
-                                <p className="text-xs italic mt-4">
+                                <p className="text-xs italic mt-4 text-slate-500 dark:text-slate-400">
                                     <strong>Design Philosophy:</strong> Like a
                                     blueprint for a house - the GeoFactor class
                                     is the foundation with raw materials, while
@@ -275,19 +277,21 @@ function AboutComponent() {
                     </Card>
 
                     {/* Use Cases */}
-                    <Card>
+                    <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
                         <CardHeader>
-                            <CardTitle>💡 Use Cases</CardTitle>
+                            <CardTitle className="text-slate-800 dark:text-slate-100">
+                                💡 Use Cases
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3 text-sm">
                                 <div className="flex gap-3">
                                     <span className="text-2xl">🏘️</span>
                                     <div>
-                                        <h4 className="font-semibold mb-1">
+                                        <h4 className="font-semibold mb-1 text-slate-800 dark:text-slate-100">
                                             Urban Planning
                                         </h4>
-                                        <p className="text-gray-700">
+                                        <p className="text-slate-600 dark:text-slate-400">
                                             Identify high-risk zones for
                                             development restrictions or flood
                                             mitigation infrastructure
@@ -297,10 +301,10 @@ function AboutComponent() {
                                 <div className="flex gap-3">
                                     <span className="text-2xl">🏗️</span>
                                     <div>
-                                        <h4 className="font-semibold mb-1">
+                                        <h4 className="font-semibold mb-1 text-slate-800 dark:text-slate-100">
                                             Construction Planning
                                         </h4>
-                                        <p className="text-gray-700">
+                                        <p className="text-slate-600 dark:text-slate-400">
                                             Assess flood susceptibility before
                                             selecting building sites or
                                             designing structures
@@ -310,10 +314,10 @@ function AboutComponent() {
                                 <div className="flex gap-3">
                                     <span className="text-2xl">🚨</span>
                                     <div>
-                                        <h4 className="font-semibold mb-1">
+                                        <h4 className="font-semibold mb-1 text-slate-800 dark:text-slate-100">
                                             Emergency Preparedness
                                         </h4>
-                                        <p className="text-gray-700">
+                                        <p className="text-slate-600 dark:text-slate-400">
                                             Identify communities at risk for
                                             targeted disaster preparedness
                                             programs
@@ -323,10 +327,10 @@ function AboutComponent() {
                                 <div className="flex gap-3">
                                     <span className="text-2xl">📊</span>
                                     <div>
-                                        <h4 className="font-semibold mb-1">
+                                        <h4 className="font-semibold mb-1 text-slate-800 dark:text-slate-100">
                                             Risk Assessment
                                         </h4>
-                                        <p className="text-gray-700">
+                                        <p className="text-slate-600 dark:text-slate-400">
                                             Support insurance underwriting and
                                             property valuation with flood risk
                                             data
@@ -338,11 +342,13 @@ function AboutComponent() {
                     </Card>
 
                     {/* Research Background */}
-                    <Card>
+                    <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
                         <CardHeader>
-                            <CardTitle>📚 Research Background</CardTitle>
+                            <CardTitle className="text-slate-800 dark:text-slate-100">
+                                📚 Research Background
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent className="text-sm text-gray-700 space-y-2">
+                        <CardContent className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
                             <p>
                                 This application is based on research studying
                                 flash floods in Davao City caused by complex
@@ -356,7 +362,9 @@ function AboutComponent() {
                                 terrain characteristics that correlate with
                                 flood susceptibility.
                             </p>
-                            <p className="font-semibold mt-3">Key Findings:</p>
+                            <p className="font-semibold mt-3 text-slate-800 dark:text-slate-100">
+                                Key Findings:
+                            </p>
                             <ul className="list-disc list-inside space-y-1 ml-2">
                                 <li>
                                     Distance to river is the most critical
@@ -383,18 +391,18 @@ function AboutComponent() {
                     </Card>
 
                     {/* Contact */}
-                    <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+                    <Card className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border-blue-200 dark:border-blue-900/50">
                         <CardContent className="pt-6">
                             <div className="text-center">
-                                <h3 className="font-semibold text-lg mb-2">
+                                <h3 className="font-semibold text-lg mb-2 text-slate-800 dark:text-slate-100">
                                     Questions or Feedback?
                                 </h3>
-                                <p className="text-sm text-gray-700 mb-4">
+                                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                                     This is an academic prototype demonstrating
                                     ensemble machine learning for flood
                                     susceptibility mapping.
                                 </p>
-                                <p className="text-xs text-gray-600">
+                                <p className="text-xs text-slate-500 dark:text-slate-500">
                                     Davao FloodSense © 2026 • Built with React,
                                     TypeScript, and tRPC
                                 </p>
