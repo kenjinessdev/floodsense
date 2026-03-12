@@ -113,9 +113,9 @@ function HomeComponent() {
                             </Card>
                         ) : (
                             <Card className="border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50">
-                                <CardContent className="pt-6">
+                                <CardContent>
                                     <div className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
-                                        <Info className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                                        <Info className="h-5 w-5 mt-0.5 shrink-0" />
                                         <div className="text-sm">
                                             <p className="font-medium mb-1">
                                                 How to use:
@@ -141,51 +141,9 @@ function HomeComponent() {
                             </Card>
                         )}
 
-                        {/* Model Info */}
-                        {/* {modelInfoQuery.data && (
-                            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-                                <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                                        Model Information
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-xs">
-                                    <div>
-                                        <span className="font-semibold">
-                                            Algorithm:
-                                        </span>{" "}
-                                        {modelInfoQuery.data.modelType}
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold">
-                                            Method:
-                                        </span>{" "}
-                                        {modelInfoQuery.data.algorithm}
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold">
-                                            Accuracy:
-                                        </span>{" "}
-                                        {(
-                                            modelInfoQuery.data.accuracy
-                                                .ensemble * 100
-                                        ).toFixed(1)}
-                                        % (AUC)
-                                    </div>
-                                    <div>
-                                        <span className="font-semibold">
-                                            Factors:
-                                        </span>{" "}
-                                        {modelInfoQuery.data.factorsUsed}{" "}
-                                        conditioning factors
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )} */}
-
                         {/* Disclaimer */}
                         <Card className="border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
-                            <CardContent className="pt-6">
+                            <CardContent>
                                 <div className="flex items-start gap-3">
                                     <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 shrink-0" />
                                     <div className="text-xs text-amber-900 dark:text-amber-200">

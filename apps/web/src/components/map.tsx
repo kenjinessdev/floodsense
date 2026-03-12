@@ -8,7 +8,7 @@ import L from "leaflet";
 import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-import { MapPin, Layers, Loader2 } from "lucide-react";
+import { MapPin, Loader2 } from "lucide-react";
 import { utmToWgs84 } from "@/lib/utm-converter";
 
 // Fix default marker icon issue in Leaflet
@@ -36,8 +36,6 @@ export function MapComponent({
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
-    const [showLayers, setShowLayers] = useState(false);
-    const [activeLayer, setActiveLayer] = useState<string>("base");
     const boundaryRef = useRef<Array<[number, number]> | null>(null);
 
     const isPointInPolygon = (
@@ -224,12 +222,6 @@ export function MapComponent({
         }
     };
 
-    const toggleLayer = (layer: string) => {
-        setActiveLayer(layer);
-        // In a full implementation, this would switch between different data layers
-        // For prototype, we'll just track the selection
-    };
-
     return (
         <div className="relative w-full h-full">
             <div ref={mapContainerRef} className="w-full h-full z-0" />
@@ -245,72 +237,7 @@ export function MapComponent({
                     <MapPin className="mr-2 h-5 w-5" />
                     My Location
                 </Button>
-
-                <Button
-                    onClick={() => setShowLayers(!showLayers)}
-                    variant="outline"
-                    className="bg-white text-gray-900 hover:bg-gray-100 shadow-lg"
-                    size="lg"
-                >
-                    <Layers className="mr-2 h-5 w-5" />
-                    Layers
-                </Button>
             </div>
-
-            {/* Layer selector panel */}
-            {showLayers && (
-                <div className="absolute top-32 right-4 z-1000 bg-white rounded-lg shadow-xl p-4 w-64">
-                    <h3 className="font-semibold mb-3 text-sm">Map Layers</h3>
-                    <div className="space-y-2">
-                        {[
-                            {
-                                id: "base",
-                                name: "Base Map",
-                                desc: "OpenStreetMap",
-                            },
-                            {
-                                id: "slope",
-                                name: "Slope Gradient",
-                                desc: "Black to White scale",
-                            },
-                            {
-                                id: "distance",
-                                name: "Distance to River",
-                                desc: "Proximity analysis",
-                            },
-                            {
-                                id: "rainfall",
-                                name: "Rainfall",
-                                desc: "Mindanao context",
-                            },
-                            {
-                                id: "lulc",
-                                name: "Land Use",
-                                desc: "LULC classification",
-                            },
-                        ].map((layer) => (
-                            <button
-                                key={layer.id}
-                                onClick={() => toggleLayer(layer.id)}
-                                className={`w-full text-left p-2 rounded text-sm transition-colors ${
-                                    activeLayer === layer.id
-                                        ? "bg-blue-100 border-2 border-blue-500"
-                                        : "bg-gray-50 hover:bg-gray-100 border-2 border-transparent"
-                                }`}
-                            >
-                                <div className="font-medium">{layer.name}</div>
-                                <div className="text-xs text-gray-600">
-                                    {layer.desc}
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-                    <div className="mt-3 pt-3 border-t text-xs text-gray-500">
-                        Active layer visualization is available in the full
-                        version
-                    </div>
-                </div>
-            )}
 
             {/* Loading overlay */}
             {isAnalyzing && (
