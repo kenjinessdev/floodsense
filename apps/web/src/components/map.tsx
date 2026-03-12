@@ -227,14 +227,14 @@ export function MapComponent({
             <div ref={mapContainerRef} className="w-full h-full z-0" />
 
             {/* Floating controls */}
-            <div className="absolute top-4 right-4 z-1000 flex flex-col gap-2">
+            <div className="absolute top-3 right-3 z-1000">
                 <Button
                     onClick={handleMyLocation}
                     disabled={isAnalyzing}
                     className="bg-white text-gray-900 hover:bg-gray-100 shadow-lg"
-                    size="lg"
+                    size="sm"
                 >
-                    <MapPin className="mr-2 h-5 w-5" />
+                    <MapPin className="mr-1.5 h-4 w-4" />
                     My Location
                 </Button>
             </div>
@@ -242,23 +242,12 @@ export function MapComponent({
             {/* Loading overlay */}
             {isAnalyzing && (
                 <div className="absolute inset-0 bg-black/40 z-999 flex items-center justify-center">
-                    <div className="bg-white rounded-lg p-6 shadow-xl flex items-center gap-3">
+                    <div className="bg-white rounded-xl p-6 shadow-xl flex items-center gap-3">
                         <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
                         <span className="font-medium">
                             Analyzing location...
                         </span>
                     </div>
-                </div>
-            )}
-
-            {/* Instructions */}
-            {!selectedLocation && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-1000 bg-white rounded-lg shadow-xl p-4 max-w-md">
-                    <p className="text-sm text-center">
-                        <strong>Click anywhere on the map</strong> within the
-                        blue boundary (Davao City) to analyze flood risk, or use{" "}
-                        <strong>"My Location"</strong> button
-                    </p>
                 </div>
             )}
         </div>
