@@ -9,129 +9,26 @@ export const Route = createFileRoute("/")({
     component: HomeComponent,
 });
 
-// Client-side mock data generation (no backend needed)
-function generateMockAnalysis(lat: number, lng: number) {
-    const factors = {
-        elevation: 45 + Math.random() * 100,
-        slope: 5 + Math.random() * 15,
-        aspect: Math.random() * 360,
-        profileCurvature: -0.5 + Math.random(),
-        distanceToRiver: 200 + Math.random() * 1000,
-        rainfall: 2200 + Math.random() * 400,
-        landUseClass: ["Urban", "Agricultural", "Forest", "Grassland"][
-            Math.floor(Math.random() * 4)
-        ],
-        lithology: ["Alluvium", "Volcanic", "Sedimentary"][
-            Math.floor(Math.random() * 3)
-        ],
-    };
-
-    const baselineProb = 0.35 + Math.random() * 0.4;
-    const baselinePrediction = {
-        riskLevel:
-            baselineProb < 0.3
-                ? "Low"
-                : baselineProb < 0.5
-                ? "Moderate"
-                : baselineProb < 0.7
-                ? "High"
-                : "Very High",
-        probability: baselineProb,
-        confidence: 0.72 + Math.random() * 0.13,
-        modelType: "Random Forest" as const,
-        auc: 0.85,
-    };
-
-    const ensembleProb = baselineProb + 0.03 + Math.random() * 0.05;
-    const rfProb = baselineProb * 0.45;
-    const xgbProb = ensembleProb - rfProb;
-
-    const prediction = {
-        riskLevel:
-            ensembleProb < 0.3
-                ? "Low"
-                : ensembleProb < 0.5
-                ? "Moderate"
-                : ensembleProb < 0.7
-                ? "High"
-                : "Very High",
-        probability: Math.min(0.95, ensembleProb),
-        confidence: 0.8 + Math.random() * 0.12,
-        modelType: "Ensemble" as const,
-        auc: 0.87,
-        rfProbability: rfProb,
-        xgbProbability: xgbProb,
-    };
-
-    const factorImportance = [
-        {
-            factor: "Distance to River",
-            importance: 0.28,
-            impact: "high" as const,
-        },
-        { factor: "Rainfall", importance: 0.22, impact: "high" as const },
-        { factor: "Elevation", importance: 0.18, impact: "medium" as const },
-        { factor: "Slope", importance: 0.14, impact: "medium" as const },
-        { factor: "Land Use", importance: 0.09, impact: "low" as const },
-        {
-            factor: "Profile Curvature",
-            importance: 0.05,
-            impact: "low" as const,
-        },
-        { factor: "Aspect", importance: 0.03, impact: "low" as const },
-        { factor: "Lithology", importance: 0.01, impact: "low" as const },
-    ];
-
-    return {
-        location: { latitude: lat, longitude: lng },
-        factors,
-        prediction,
-        baselineRF: baselinePrediction,
-        factorImportance,
-        timestamp: new Date().toISOString(),
-    };
-}
-
 function HomeComponent() {
     const navigate = useNavigate();
     const [selectedLocation, setSelectedLocation] = useState<{
         lat: number;
         lng: number;
     } | null>(null);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const handleLocationSelect = (lat: number, lng: number) => {
         setSelectedLocation({ lat, lng });
     };
 
-    const handleAnalyze = async () => {
+    const handleAnalyze = () => {
         if (!selectedLocation) return;
-
-        setIsAnalyzing(true);
-        try {
-            // Simulate API delay for better UX
-            await new Promise((resolve) => setTimeout(resolve, 800));
-
-            const result = generateMockAnalysis(
-                selectedLocation.lat,
-                selectedLocation.lng
-            );
-
-            // Navigate to results page with data
-            navigate({
-                to: "/result",
-                search: {
-                    lat: selectedLocation.lat,
-                    lng: selectedLocation.lng,
-                    data: JSON.stringify(result),
-                },
-            });
-        } catch (error) {
-            console.error("Analysis failed:", error);
-            alert("Failed to analyze location. Please try again.");
-        } finally {
-            setIsAnalyzing(false);
-        }
+        navigate({
+            to: "/result",
+            search: {
+                lat: selectedLocation.lat,
+                lng: selectedLocation.lng,
+            },
+        });
     };
 
     return (
@@ -166,7 +63,7 @@ function HomeComponent() {
                     <MapComponent
                         onLocationSelect={handleLocationSelect}
                         selectedLocation={selectedLocation}
-                        isAnalyzing={isAnalyzing}
+                        isAnalyzing={false}
                     />
                 </div>
 
@@ -207,13 +104,11 @@ function HomeComponent() {
                                     </div>
                                     <Button
                                         onClick={handleAnalyze}
-                                        disabled={isAnalyzing}
-                                        className="w-full mt-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200"
+                                        disabled={!selectedLocation}
+                                        className="w-full mt-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                         size="lg"
                                     >
-                                        {isAnalyzing
-                                            ? "Analyzing..."
-                                            : "Analyze Location"}
+                                        Analyze Location
                                     </Button>
                                 </CardContent>
                             </Card>
