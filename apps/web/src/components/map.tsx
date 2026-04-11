@@ -216,6 +216,17 @@ export function MapComponent({
                     }
 
                     onLocationSelect(latitude, longitude);
+                    setSelectedAddress("Resolving location...");
+
+                    void reverseGeocode(latitude, longitude)
+                        .then((address) => {
+                            setSelectedAddress(address);
+                        })
+                        .catch((error: unknown) => {
+                            console.error("Reverse geocoding error:", error);
+                            setSelectedAddress("Unknown location");
+                        });
+
                     mapRef.current?.setView([latitude, longitude], 14);
                 },
                 (error) => {
