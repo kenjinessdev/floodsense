@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { MapPin, Loader2 } from "lucide-react";
 import { utmToWgs84 } from "@/lib/utm-converter";
+import { reverseGeocode } from "@/lib/reverse-geocode";
 
 // Fix default marker icon issue in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -37,6 +38,8 @@ export function MapComponent({
     const markerRef = useRef<L.Marker | null>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const boundaryRef = useRef<Array<[number, number]> | null>(null);
+    const [selectedAddress, setSelectedAddress] =
+        useState<string>("Unknown location");
 
     const isPointInPolygon = (
         lat: number,
@@ -134,6 +137,16 @@ export function MapComponent({
             }
 
             onLocationSelect(lat, lng);
+            setSelectedAddress("Resolving location...");
+
+            void reverseGeocode(lat, lng)
+                .then((address) => {
+                    setSelectedAddress(address);
+                })
+                .catch((error: unknown) => {
+                    console.error("Reverse geocoding error:", error);
+                    setSelectedAddress("Unknown location");
+                });
         });
 
         mapRef.current = map;
@@ -172,15 +185,14 @@ export function MapComponent({
                 `
       <div class="text-sm">
         <strong>Selected Location</strong><br/>
-        Lat: ${selectedLocation.lat.toFixed(6)}<br/>
-        Lng: ${selectedLocation.lng.toFixed(6)}
+                ${selectedAddress}
       </div>
     `,
             )
             .openPopup();
 
         markerRef.current = marker;
-    }, [selectedLocation]);
+    }, [selectedLocation, selectedAddress]);
 
     const handleMyLocation = () => {
         if ("geolocation" in navigator) {
