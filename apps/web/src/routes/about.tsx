@@ -403,8 +403,8 @@ function AboutComponent() {
                                     susceptibility mapping.
                                 </p>
                                 <p className="text-xs text-slate-500 dark:text-slate-500">
-                                    Davao FloodSense © 2026 • Built with React,
-                                    TypeScript, and tRPC
+                                    Davao FloodSense © 2026 • Built with React
+                                    and TypeScript
                                 </p>
                             </div>
                         </CardContent>

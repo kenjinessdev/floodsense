@@ -1,12 +1,9 @@
 packages:
-  - apps/*
-  - packages/*
+    - apps/*
 
 catalog:
-  '@trpc/client': ^11.7.2
-  '@trpc/server': ^11.7.2
-  '@types/express': ^5.0.1
-  '@types/node': ^22.13.14
-  dotenv: ^17.2.2
-  typescript: ^5
-  zod: 4.3.5
+    "@types/express": ^5.0.1
+    "@types/node": ^22.13.14
+    dotenv: ^17.2.2
+    typescript: ^5
+    zod: 4.3.5
