@@ -4,23 +4,21 @@ A web-based flood susceptibility mapping application for Davao City, Mindanao, P
 
 ## 🎯 Features
 
--   **Interactive Map Interface**: OpenStreetMap-based selection within Davao City bounds
--   **Ensemble ML Model**: Combines Random Forest and XGBoost for superior accuracy (AUC 0.87+)
--   **8 Conditioning Factors**: Elevation, Slope, Aspect, Curvature, Distance to River, Rainfall, Land Use, Lithology
--   **Risk Assessment**: Visual gauge showing Low/Moderate/High/Very High susceptibility
--   **Factor Analysis**: Detailed breakdown of why a location has specific risk level
--   **Responsive Design**: Works on desktop and mobile devices
+- **Interactive Map Interface**: OpenStreetMap-based selection within Davao City bounds
+- **Ensemble ML Model**: Combines Random Forest and XGBoost for superior accuracy (AUC 0.87+)
+- **8 Conditioning Factors**: Elevation, Slope, Aspect, Curvature, Distance to River, Rainfall, Land Use, Lithology
+- **Risk Assessment**: Visual gauge showing Low/Moderate/High/Very High susceptibility
+- **Factor Analysis**: Detailed breakdown of why a location has specific risk level
+- **Responsive Design**: Works on desktop and mobile devices
 
 ## 🏗️ Tech Stack
 
--   **TypeScript** - Type safety and improved developer experience
--   **React 18** - Modern frontend framework
--   **TanStack Router** - File-based routing with full type safety
--   **TailwindCSS** - Utility-first CSS for rapid UI development
--   **tRPC** - End-to-end type-safe APIs
--   **Express** - Fast backend web framework
--   **Leaflet** - Interactive maps with OpenStreetMap
--   **Turborepo** - Optimized monorepo build system
+- **TypeScript** - Type safety and improved developer experience
+- **React 18** - Modern frontend framework
+- **TanStack Router** - File-based routing with full type safety
+- **TailwindCSS** - Utility-first CSS for rapid UI development
+- **Leaflet** - Interactive maps with OpenStreetMap
+- **Turborepo** - Optimized monorepo build system
 
 ## 🚀 Getting Started
 
@@ -37,7 +35,6 @@ pnpm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
-The API server runs at [http://localhost:3000](http://localhost:3000).
 
 ## 📖 How to Use
 
@@ -51,13 +48,8 @@ The API server runs at [http://localhost:3000](http://localhost:3000).
 ```
 floodsense/
 ├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   └── server/      # Backend API (Express + tRPC)
+│   └── web/         # Frontend application (React + TanStack Router)
 ├── packages/
-│   ├── api/         # API routers and ML models
-│   │   └── src/
-│   │       ├── models/  # GeoFactor, RandomForest, XGBoost, Ensemble
-│   │       └── routers/ # tRPC endpoints
 │   ├── config/      # Shared TypeScript configs
 │   └── env/         # Environment variable handling
 ```
@@ -70,36 +62,36 @@ Extracts eight conditioning factors: Elevation, Slope, Aspect, Profile Curvature
 
 ### `RandomForestModel` - Bagging Ensemble
 
--   100 decision trees with majority voting
--   Provides stability and robustness
--   Accuracy: AUC 0.85
+- 100 decision trees with majority voting
+- Provides stability and robustness
+- Accuracy: AUC 0.85
 
 ### `XGBoostModel` - Gradient Boosting
 
--   50 sequential error correction rounds
--   Provides precision and accuracy
--   Accuracy: AUC 0.86
+- 50 sequential error correction rounds
+- Provides precision and accuracy
+- Accuracy: AUC 0.86
 
 ### `EnsemblePredictor` - Stacking
 
--   Combines RF (45%) and XGBoost (55%)
--   Superior accuracy: AUC 0.87+
--   Outputs probability, risk level, confidence
+- Combines RF (45%) and XGBoost (55%)
+- Superior accuracy: AUC 0.87+
+- Outputs probability, risk level, confidence
 
 ## 📜 Available Scripts
 
--   `pnpm run dev`: Start all applications in development mode
--   `pnpm run build`: Build all applications for production
--   `pnpm run dev:web`: Start only the web application
--   `pnpm run dev:server`: Start only the API server
--   `pnpm run check-types`: Check TypeScript types across all apps
+- `pnpm run dev`: Start all applications in development mode
+- `pnpm run build`: Build all applications for production
+- `pnpm run dev:web`: Start only the web application
+- `pnpm run dev:server`: Start only the API server
+- `pnpm run check-types`: Check TypeScript types across all apps
 
 ## ⚠️ Important Disclaimers
 
--   **NOT Real-Time Forecasting**: This tool provides susceptibility mapping using offline data
--   **Planning Tool**: For risk assessment and planning, not emergency response
--   **Davao City Only**: Analysis limited to geographical bounds of Davao City
--   **Academic Prototype**: Demonstration with synthetic training data for educational purposes
+- **NOT Real-Time Forecasting**: This tool provides susceptibility mapping using offline data
+- **Planning Tool**: For risk assessment and planning, not emergency response
+- **Davao City Only**: Analysis limited to geographical bounds of Davao City
+- **Academic Prototype**: Demonstration with synthetic training data for educational purposes
 
 ## 🎓 Academic Context
 
@@ -109,4 +101,4 @@ Based on research studying flash floods in Davao City caused by complex terrain 
 
 **Davao FloodSense** © 2026 • Built for flood risk awareness
 
--   `cd apps/web && pnpm run generate-pwa-assets`: Generate PWA assets
+- `cd apps/web && pnpm run generate-pwa-assets`: Generate PWA assets

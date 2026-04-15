@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RiskGauge } from "@/components/risk-gauge";
 import { FactorAnalysis } from "@/components/factor-analysis";
 import { ModelComparison } from "@/components/model-comparison";
-import { trpc } from "@/utils/trpc";
 import { ArrowLeft, Download, AlertCircle } from "lucide-react";
 
 const searchSchema = z.object({
@@ -23,47 +22,23 @@ function ResultComponent() {
     const navigate = useNavigate();
     const { lat, lng } = Route.useSearch();
 
-    const { data, isLoading, isError, error, refetch } =
-        trpc.flood.predict.useQuery(
-            { latitude: lat, longitude: lng },
-            { retry: 1, staleTime: 5 * 60 * 1000 },
-        );
+    // TODO: Replace with Python backend API call
+    const isLoading = false;
+    const isError = true;
+    const error = {
+        message:
+            "Backend not implemented yet. This will be replaced with Python API integration.",
+    };
+    const data = null;
 
-    const errorMessage = (() => {
-        if (!error) return "An unexpected error occurred.";
-        if (error.data?.code === "BAD_REQUEST")
-            return "The selected coordinates are outside the supported Davao City region (lat 6.8–7.6, lng 125.2–125.8).";
-        if (
-            error.message.includes("unavailable") ||
-            error.data?.code === "INTERNAL_SERVER_ERROR"
-        )
-            return "The prediction service is currently unavailable. Please try again later.";
-        return error.message;
-    })();
+    const errorMessage =
+        "The flood prediction backend is currently being migrated to Python. This feature will be available once the Python API is integrated.";
 
     const handleBack = () => navigate({ to: "/" });
 
     const handleDownload = () => {
-        if (!data) return;
-        const report = {
-            title: "Davao FloodSense Risk Assessment Report",
-            coordinates: data.coordinates,
-            extracted_values: data.extracted_values,
-            baseline_rf: data.baseline_rf,
-            ensemble: data.ensemble,
-            generated_at: new Date().toISOString(),
-            disclaimer:
-                "This is a susceptibility assessment based on offline data, not real-time forecasting.",
-        };
-        const blob = new Blob([JSON.stringify(report, null, 2)], {
-            type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `flood-risk-${lat.toFixed(4)}_${lng.toFixed(4)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+        // Placeholder for future implementation
+        alert("Download feature will be available once backend is integrated.");
     };
 
     return (

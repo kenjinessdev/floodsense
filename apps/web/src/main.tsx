@@ -5,7 +5,6 @@ import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-import { trpc, trpcClient } from "./utils/trpc";
 
 function App() {
     const [queryClient] = useState(() => new QueryClient());
@@ -14,15 +13,13 @@ function App() {
         routeTree,
         defaultPreload: "intent",
         defaultPendingComponent: () => <Loader />,
-        context: { queryClient, trpc },
+        context: { queryClient },
     });
 
     return (
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-            <QueryClientProvider client={queryClient}>
-                <RouterProvider router={router} />
-            </QueryClientProvider>
-        </trpc.Provider>
+        <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+        </QueryClientProvider>
     );
 }
 
