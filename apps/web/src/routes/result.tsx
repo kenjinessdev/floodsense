@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,11 +7,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RiskGauge } from "@/components/risk-gauge";
 import { FactorAnalysis } from "@/components/factor-analysis";
 import { ModelComparison } from "@/components/model-comparison";
+import { predictFloodRisk } from "@/lib/api";
 import { ArrowLeft, Download, AlertCircle } from "lucide-react";
 
+const coordinateSchema = z
+    .union([z.number(), z.string()])
+    .transform((value) =>
+        typeof value === "string" ? parseFloat(value) : value,
+    );
+
 const searchSchema = z.object({
-    lat: z.number().finite().min(6.8).max(7.6),
-    lng: z.number().finite().min(125.2).max(125.8),
+    lat: coordinateSchema.pipe(z.number().finite().min(6.8).max(7.6)),
+    lng: coordinateSchema.pipe(z.number().finite().min(125.2).max(125.8)),
 });
 
 export const Route = createFileRoute("/result")({
@@ -22,17 +30,15 @@ function ResultComponent() {
     const navigate = useNavigate();
     const { lat, lng } = Route.useSearch();
 
-    // TODO: Replace with Python backend API call
-    const isLoading = false;
-    const isError = true;
-    const error = {
-        message:
-            "Backend not implemented yet. This will be replaced with Python API integration.",
-    };
-    const data = null;
+    const { data, error, isPending, isError, isSuccess, refetch } = useQuery({
+        queryKey: ["flood-risk-prediction", lat, lng],
+        queryFn: () => predictFloodRisk(lat, lng),
+    });
 
     const errorMessage =
-        "The flood prediction backend is currently being migrated to Python. This feature will be available once the Python API is integrated.";
+        error instanceof Error
+            ? error.message
+            : "Failed to fetch flood prediction data.";
 
     const handleBack = () => navigate({ to: "/" });
 
@@ -103,13 +109,13 @@ function ResultComponent() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {isLoading || !data ? (
+                                {isPending ? (
                                     <div className="space-y-4">
                                         <Skeleton className="h-32 w-full rounded-lg" />
                                         <Skeleton className="h-8 w-3/4 mx-auto rounded-full" />
                                         <Skeleton className="h-4 w-full rounded" />
                                     </div>
-                                ) : (
+                                ) : isSuccess && data ? (
                                     <>
                                         <RiskGauge
                                             probability={
@@ -134,6 +140,10 @@ function ResultComponent() {
                                             </Button>
                                         </div>
                                     </>
+                                ) : (
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                                        Prediction data is unavailable.
+                                    </p>
                                 )}
                             </CardContent>
                         </Card>
@@ -141,12 +151,12 @@ function ResultComponent() {
 
                     {/* Right Column */}
                     <div className="lg:col-span-2 space-y-6">
-                        {isLoading || !data ? (
+                        {isPending ? (
                             <>
                                 <Skeleton className="h-64 w-full rounded-xl" />
                                 <Skeleton className="h-80 w-full rounded-xl" />
                             </>
-                        ) : (
+                        ) : isSuccess && data ? (
                             <>
                                 <ModelComparison
                                     baselineRf={data.baseline_rf}
@@ -198,6 +208,12 @@ function ResultComponent() {
                                     </CardContent>
                                 </Card>
                             </>
+                        ) : (
+                            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                                <CardContent className="pt-6 text-sm text-slate-600 dark:text-slate-400">
+                                    No prediction result to display yet.
+                                </CardContent>
+                            </Card>
                         )}
                     </div>
                 </div>
