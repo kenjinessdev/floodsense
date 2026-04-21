@@ -29,6 +29,85 @@ interface MapComponentProps {
     isAnalyzing: boolean;
 }
 
+interface QuickNavRegion {
+    name: string;
+    center: [number, number];
+    zoom: number;
+}
+
+interface OverpassElement {
+    tags?: {
+        name?: string;
+        admin_level?: string;
+    };
+    center?: {
+        lat?: number;
+        lon?: number;
+    };
+}
+
+interface OverpassResponse {
+    elements?: OverpassElement[];
+}
+
+const QUICK_NAV_CACHE_KEY = "floodsense.quick-nav.regions.v2";
+const OVERPASS_ENDPOINT = "https://overpass-api.de/api/interpreter";
+const OVERPASS_QUERY = `[out:json][timeout:60];
+area["name"="Davao City"]["admin_level"="6"]->.davao;
+(
+  relation["boundary"="administrative"]["admin_level"~"^(9|10)$"](area.davao);
+);
+out tags center;`;
+
+const isQuickNavRegionArray = (value: unknown): value is QuickNavRegion[] =>
+    Array.isArray(value) &&
+    value.every((region) => {
+        if (typeof region !== "object" || !region) return false;
+        const item = region as Partial<QuickNavRegion>;
+        return (
+            typeof item.name === "string" &&
+            Array.isArray(item.center) &&
+            item.center.length === 2 &&
+            typeof item.center[0] === "number" &&
+            typeof item.center[1] === "number" &&
+            typeof item.zoom === "number"
+        );
+    });
+
+const buildQuickNavRegionsFromOverpass = (
+    payload: OverpassResponse,
+): QuickNavRegion[] => {
+    const unique = new Map<string, QuickNavRegion>();
+
+    for (const element of payload.elements ?? []) {
+        const name = element.tags?.name?.trim();
+        const lat = element.center?.lat;
+        const lon = element.center?.lon;
+
+        if (!name || typeof lat !== "number" || typeof lon !== "number") {
+            continue;
+        }
+
+        if (!unique.has(name)) {
+            unique.set(name, {
+                name,
+                center: [lat, lon],
+                zoom: 14,
+            });
+        }
+    }
+
+    const regions = Array.from(unique.values()).sort((a, b) =>
+        a.name.localeCompare(b.name),
+    );
+
+    if (regions.length === 0) {
+        throw new Error("No admin-level centroid data found from Overpass.");
+    }
+
+    return regions;
+};
+
 export function MapComponent({
     onLocationSelect,
     selectedLocation,
@@ -40,6 +119,11 @@ export function MapComponent({
     const boundaryRef = useRef<Array<[number, number]> | null>(null);
     const [selectedAddress, setSelectedAddress] =
         useState<string>("Unknown location");
+    const [isQuickNavOpen, setIsQuickNavOpen] = useState(false);
+    const [quickNavRegions, setQuickNavRegions] = useState<QuickNavRegion[]>(
+        [],
+    );
+    const [isQuickNavLoading, setIsQuickNavLoading] = useState(true);
 
     const isPointInPolygon = (
         lat: number,
@@ -65,8 +149,11 @@ export function MapComponent({
         const map = L.map(mapContainerRef.current, {
             center: [7.07, 125.61], // Davao City center
             zoom: 12,
-            zoomControl: true,
+            zoomControl: false,
         });
+
+        // Keep zoom controls at bottom-right so quick navigation can sit above.
+        L.control.zoom({ position: "bottomright" }).addTo(map);
 
         // Add OpenStreetMap tile layer
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -157,6 +244,61 @@ export function MapComponent({
         };
     }, []);
 
+    useEffect(() => {
+        const loadQuickNavRegions = async () => {
+            try {
+                const cached = sessionStorage.getItem(QUICK_NAV_CACHE_KEY);
+                if (cached) {
+                    try {
+                        const cachedValue = JSON.parse(cached) as unknown;
+                        if (isQuickNavRegionArray(cachedValue)) {
+                            setQuickNavRegions(cachedValue);
+                            return;
+                        }
+                    } catch {
+                        sessionStorage.removeItem(QUICK_NAV_CACHE_KEY);
+                    }
+                }
+
+                const response = await fetch(OVERPASS_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded; charset=UTF-8",
+                    },
+                    body: new URLSearchParams({
+                        data: OVERPASS_QUERY,
+                    }).toString(),
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Overpass request failed with status ${response.status}.`,
+                    );
+                }
+
+                const payload = (await response.json()) as OverpassResponse;
+                const regions = buildQuickNavRegionsFromOverpass(payload);
+
+                setQuickNavRegions(regions);
+                sessionStorage.setItem(
+                    QUICK_NAV_CACHE_KEY,
+                    JSON.stringify(regions),
+                );
+            } catch (error: unknown) {
+                console.error(
+                    "Failed to load quick navigation regions:",
+                    error,
+                );
+                setQuickNavRegions([]);
+            } finally {
+                setIsQuickNavLoading(false);
+            }
+        };
+
+        void loadQuickNavRegions();
+    }, []);
+
     // Update marker when location changes
     useEffect(() => {
         if (!mapRef.current || !selectedLocation) return;
@@ -245,6 +387,10 @@ export function MapComponent({
         }
     };
 
+    const handleGoToRegion = (center: [number, number], zoom: number) => {
+        mapRef.current?.setView(center, zoom);
+    };
+
     return (
         <div className="relative w-full h-full">
             <div ref={mapContainerRef} className="w-full h-full z-0" />
@@ -259,6 +405,53 @@ export function MapComponent({
                 >
                     <MapPin className="mr-1.5 h-4 w-4" />
                     My Location
+                </Button>
+            </div>
+
+            <div className="absolute bottom-16 right-3 z-1000 flex flex-col items-end gap-2">
+                {isQuickNavOpen && (
+                    <div className="w-56 rounded-xl border border-slate-200 bg-white/95 p-2 shadow-xl backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95">
+                        <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+                            Quick Navigation
+                        </p>
+                        {isQuickNavLoading && quickNavRegions.length === 0 ? (
+                            <p className="px-1 py-2 text-xs text-slate-500 dark:text-slate-300">
+                                Loading regions...
+                            </p>
+                        ) : quickNavRegions.length === 0 ? (
+                            <p className="px-1 py-2 text-xs text-slate-500 dark:text-slate-300">
+                                No regions available.
+                            </p>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-1.5 max-h-44 overflow-y-auto pr-1">
+                                {quickNavRegions.map((region) => (
+                                    <Button
+                                        key={region.name}
+                                        onClick={() =>
+                                            handleGoToRegion(
+                                                region.center,
+                                                region.zoom,
+                                            )
+                                        }
+                                        variant="outline"
+                                        size="xs"
+                                        className="justify-start"
+                                    >
+                                        {region.name}
+                                    </Button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <Button
+                    onClick={() => setIsQuickNavOpen((open) => !open)}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/95 shadow-lg backdrop-blur-sm text-slate-900 hover:bg-white dark:bg-slate-900/95 dark:text-slate-100 dark:hover:bg-slate-900"
+                >
+                    📍 Go to Region
                 </Button>
             </div>
 
