@@ -1,9 +1,43 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MapComponent } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Info, AlertCircle } from "lucide-react";
+
+interface DistrictCentroid {
+    name: string;
+    lat: number;
+    lon: number;
+    type?: string;
+}
+
+interface QuickNavRegion {
+    name: string;
+    center: [number, number];
+    zoom: number;
+}
+
+interface GoToRegionTarget {
+    center: [number, number];
+    zoom: number;
+    requestId: number;
+}
+
+const QUICK_NAV_CACHE_KEY = "floodsense.quick-nav.districts.v1";
+
+const isDistrictCentroidArray = (value: unknown): value is DistrictCentroid[] =>
+    Array.isArray(value) &&
+    value.every((item) => {
+        if (typeof item !== "object" || !item) return false;
+        const candidate = item as Partial<DistrictCentroid>;
+        return (
+            typeof candidate.name === "string" &&
+            typeof candidate.lat === "number" &&
+            typeof candidate.lon === "number"
+        );
+    });
 
 export const Route = createFileRoute("/")({
     component: HomeComponent,
@@ -15,6 +49,85 @@ function HomeComponent() {
         lat: number;
         lng: number;
     } | null>(null);
+    const [quickNavDistricts, setQuickNavDistricts] = useState<
+        QuickNavRegion[]
+    >([]);
+    const [isQuickNavLoading, setIsQuickNavLoading] = useState(true);
+    const [goToRegionTarget, setGoToRegionTarget] =
+        useState<GoToRegionTarget | null>(null);
+    const [districtQuery, setDistrictQuery] = useState("");
+
+    useEffect(() => {
+        const loadQuickNavDistricts = async () => {
+            try {
+                const cached = sessionStorage.getItem(QUICK_NAV_CACHE_KEY);
+                if (cached) {
+                    try {
+                        const cachedValue = JSON.parse(cached) as unknown;
+                        if (
+                            Array.isArray(cachedValue) &&
+                            cachedValue.every(
+                                (item) =>
+                                    typeof item === "object" &&
+                                    item !== null &&
+                                    typeof (item as { name?: unknown }).name ===
+                                        "string" &&
+                                    Array.isArray(
+                                        (item as { center?: unknown }).center,
+                                    ) &&
+                                    typeof (item as { zoom?: unknown }).zoom ===
+                                        "number",
+                            )
+                        ) {
+                            setQuickNavDistricts(
+                                cachedValue as QuickNavRegion[],
+                            );
+                            return;
+                        }
+                    } catch {
+                        sessionStorage.removeItem(QUICK_NAV_CACHE_KEY);
+                    }
+                }
+
+                const response = await fetch("/districts.json");
+                if (!response.ok) {
+                    throw new Error(
+                        `Failed to load districts.json (${response.status})`,
+                    );
+                }
+
+                const payload = (await response.json()) as unknown;
+                if (!isDistrictCentroidArray(payload)) {
+                    throw new Error("districts.json has invalid shape");
+                }
+
+                const districts = payload
+                    .filter((item) => !item.type || item.type === "district")
+                    .map((item) => ({
+                        name: item.name,
+                        center: [item.lat, item.lon] as [number, number],
+                        zoom: 14,
+                    }))
+                    .sort((a, b) => a.name.localeCompare(b.name));
+
+                setQuickNavDistricts(districts);
+                sessionStorage.setItem(
+                    QUICK_NAV_CACHE_KEY,
+                    JSON.stringify(districts),
+                );
+            } catch (error: unknown) {
+                console.error(
+                    "Failed to load quick navigation districts:",
+                    error,
+                );
+                setQuickNavDistricts([]);
+            } finally {
+                setIsQuickNavLoading(false);
+            }
+        };
+
+        void loadQuickNavDistricts();
+    }, []);
 
     const handleLocationSelect = (lat: number, lng: number) => {
         setSelectedLocation({ lat, lng });
@@ -30,6 +143,23 @@ function HomeComponent() {
             },
         });
     };
+
+    const handleGoToDistrict = (region: QuickNavRegion) => {
+        setGoToRegionTarget({
+            center: region.center,
+            zoom: region.zoom,
+            requestId: Date.now(),
+        });
+    };
+
+    const filteredQuickNavDistricts = useMemo(() => {
+        const query = districtQuery.trim().toLowerCase();
+        if (!query) return quickNavDistricts;
+
+        return quickNavDistricts.filter((region) =>
+            region.name.toLowerCase().includes(query),
+        );
+    }, [quickNavDistricts, districtQuery]);
 
     return (
         <div className="h-svh flex flex-col bg-slate-50 dark:bg-slate-950">
@@ -64,6 +194,7 @@ function HomeComponent() {
                         onLocationSelect={handleLocationSelect}
                         selectedLocation={selectedLocation}
                         isAnalyzing={false}
+                        goToRegionTarget={goToRegionTarget}
                     />
 
                     {/* Mobile bottom overlay panel */}
@@ -177,6 +308,66 @@ function HomeComponent() {
                                 </CardContent>
                             </Card>
                         )}
+
+                        <Card className="border-slate-200 dark:border-slate-800">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                    Go to District
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {isQuickNavLoading &&
+                                quickNavDistricts.length === 0 ? (
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        Loading districts...
+                                    </p>
+                                ) : quickNavDistricts.length === 0 ? (
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        No districts available.
+                                    </p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <Input
+                                            value={districtQuery}
+                                            onChange={(event) =>
+                                                setDistrictQuery(
+                                                    event.currentTarget.value,
+                                                )
+                                            }
+                                            placeholder="Search district..."
+                                            className="h-8"
+                                        />
+
+                                        {filteredQuickNavDistricts.length ===
+                                        0 ? (
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                No matching districts.
+                                            </p>
+                                        ) : (
+                                            <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                                                {filteredQuickNavDistricts.map(
+                                                    (region) => (
+                                                        <Button
+                                                            key={region.name}
+                                                            onClick={() =>
+                                                                handleGoToDistrict(
+                                                                    region,
+                                                                )
+                                                            }
+                                                            variant="outline"
+                                                            size="xs"
+                                                            className="justify-start"
+                                                        >
+                                                            {region.name}
+                                                        </Button>
+                                                    ),
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
 
                         {/* Disclaimer */}
                         <Card className="border-amber-200 dark:border-amber-900/50 bg-linear-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">

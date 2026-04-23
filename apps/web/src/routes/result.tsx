@@ -81,10 +81,10 @@ function ResultComponent() {
                             <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                             <div>
                                 <p className="font-semibold text-red-800 dark:text-red-300">
-                                    Failed to load prediction
+                                    Unable to analyze this location.
                                 </p>
                                 <p className="text-sm text-red-700 dark:text-red-400 mt-1">
-                                    {errorMessage}
+                                    Please try again.
                                 </p>
                                 <Button
                                     onClick={() => refetch()}

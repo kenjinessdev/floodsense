@@ -1,0 +1,68 @@
+[
+    {
+        "name": "Agdao District",
+        "lat": 7.0899811,
+        "lon": 125.6325167,
+        "type": "district"
+    },
+    {
+        "name": "Baguio District",
+        "lat": 7.170897,
+        "lon": 125.3325753,
+        "type": "district"
+    },
+    {
+        "name": "Buhangin District",
+        "lat": 7.1757437,
+        "lon": 125.593592,
+        "type": "district"
+    },
+    {
+        "name": "Bunawan District",
+        "lat": 7.2121734,
+        "lon": 125.6255581,
+        "type": "district"
+    },
+    {
+        "name": "Calinan District",
+        "lat": 7.1952253,
+        "lon": 125.409472,
+        "type": "district"
+    },
+    {
+        "name": "Marilog District",
+        "lat": 7.3689731,
+        "lon": 125.309726,
+        "type": "district"
+    },
+    {
+        "name": "Paquibato District",
+        "lat": 7.4275005,
+        "lon": 125.4398373,
+        "type": "district"
+    },
+    {
+        "name": "Poblacion District",
+        "lat": 7.0815991,
+        "lon": 125.6084574,
+        "type": "district"
+    },
+    {
+        "name": "Talomo District",
+        "lat": 7.0798691,
+        "lon": 125.5529872,
+        "type": "district"
+    },
+    {
+        "name": "Toril District",
+        "lat": 7.026892,
+        "lon": 125.3900588,
+        "type": "district"
+    },
+    {
+        "name": "Tugbok District",
+        "lat": 7.132066,
+        "lon": 125.4566547,
+        "type": "district"
+    }
+]

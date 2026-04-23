@@ -27,12 +27,18 @@ interface MapComponentProps {
     onLocationSelect: (lat: number, lng: number) => void;
     selectedLocation: { lat: number; lng: number } | null;
     isAnalyzing: boolean;
+    goToRegionTarget?: {
+        center: [number, number];
+        zoom: number;
+        requestId: number;
+    } | null;
 }
 
 export function MapComponent({
     onLocationSelect,
     selectedLocation,
     isAnalyzing,
+    goToRegionTarget,
 }: MapComponentProps) {
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
@@ -65,8 +71,11 @@ export function MapComponent({
         const map = L.map(mapContainerRef.current, {
             center: [7.07, 125.61], // Davao City center
             zoom: 12,
-            zoomControl: true,
+            zoomControl: false,
         });
+
+        // Keep zoom controls at bottom-right so quick navigation can sit above.
+        L.control.zoom({ position: "bottomright" }).addTo(map);
 
         // Add OpenStreetMap tile layer
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -156,6 +165,11 @@ export function MapComponent({
             mapRef.current = null;
         };
     }, []);
+
+    useEffect(() => {
+        if (!mapRef.current || !goToRegionTarget) return;
+        mapRef.current.setView(goToRegionTarget.center, goToRegionTarget.zoom);
+    }, [goToRegionTarget]);
 
     // Update marker when location changes
     useEffect(() => {

@@ -1,0 +1,547 @@
+[
+    {
+        "name": "1-A Bolton Riverside",
+        "lat": 7.0615371,
+        "lon": 125.6065413
+    },
+    {
+        "name": "19-B Garcia Heights",
+        "lat": 7.0923348,
+        "lon": 125.6033106
+    },
+    {
+        "name": "23-C Darussalam",
+        "lat": 7.0713753,
+        "lon": 125.6240887
+    },
+    {
+        "name": "24-C Fatima",
+        "lat": 7.0692745,
+        "lon": 125.6170608
+    },
+    {
+        "name": "26-C Silangan",
+        "lat": 7.0726574,
+        "lon": 125.6228501
+    },
+    {
+        "name": "27-C Santa Ana",
+        "lat": 7.0753958,
+        "lon": 125.623194
+    },
+    {
+        "name": "31-D Roxas",
+        "lat": 7.064025,
+        "lon": 125.6167365
+    },
+    {
+        "name": "33-D Bagoroma",
+        "lat": 7.0679067,
+        "lon": 125.614774
+    },
+    {
+        "name": "5-A Bankerohan",
+        "lat": 7.0694762,
+        "lon": 125.5984637
+    },
+    {
+        "name": "6-A Saint Jude",
+        "lat": 7.0706422,
+        "lon": 125.602544
+    },
+    {
+        "name": "7-A General Malvar",
+        "lat": 7.0727891,
+        "lon": 125.6047455
+    },
+    {
+        "name": "74-A Matina Crossing",
+        "lat": 7.0604913,
+        "lon": 125.578543
+    },
+    {
+        "name": "75-A Matina Aplaya",
+        "lat": 7.0396309,
+        "lon": 125.5750225
+    },
+    {
+        "name": "76-A Bucana",
+        "lat": 7.0535706,
+        "lon": 125.5997578
+    },
+    {
+        "name": "Agdao Proper",
+        "lat": 7.0846369,
+        "lon": 125.6239884
+    },
+    {
+        "name": "Baganihan",
+        "lat": 7.4598772,
+        "lon": 125.2542471
+    },
+    {
+        "name": "Bago Aplaya",
+        "lat": 7.0425997,
+        "lon": 125.533081
+    },
+    {
+        "name": "Bago Gallera",
+        "lat": 7.0539265,
+        "lon": 125.517927
+    },
+    {
+        "name": "Baguio Proper",
+        "lat": 7.1695849,
+        "lon": 125.3962062
+    },
+    {
+        "name": "Baliok",
+        "lat": 7.0467329,
+        "lon": 125.5022617
+    },
+    {
+        "name": "Bantol",
+        "lat": 7.3016624,
+        "lon": 125.3416979
+    },
+    {
+        "name": "Barangay 10-A",
+        "lat": 7.0809369,
+        "lon": 125.6027014
+    },
+    {
+        "name": "Barangay 11-B",
+        "lat": 7.0778873,
+        "lon": 125.6098776
+    },
+    {
+        "name": "Barangay 12-B",
+        "lat": 7.0796941,
+        "lon": 125.6112813
+    },
+    {
+        "name": "Barangay 13-B",
+        "lat": 7.0798056,
+        "lon": 125.6138458
+    },
+    {
+        "name": "Barangay 14-B",
+        "lat": 7.0794912,
+        "lon": 125.6167902
+    },
+    {
+        "name": "Barangay 15-B",
+        "lat": 7.0809392,
+        "lon": 125.6190464
+    },
+    {
+        "name": "Barangay 16-B",
+        "lat": 7.0834299,
+        "lon": 125.6169657
+    },
+    {
+        "name": "Barangay 17-B",
+        "lat": 7.0841623,
+        "lon": 125.6163703
+    },
+    {
+        "name": "Barangay 18-B",
+        "lat": 7.0855247,
+        "lon": 125.6148175
+    },
+    {
+        "name": "Barangay 2-A",
+        "lat": 7.0663015,
+        "lon": 125.6052886
+    },
+    {
+        "name": "Barangay 20-B",
+        "lat": 7.0899991,
+        "lon": 125.6139867
+    },
+    {
+        "name": "Barangay 21-C",
+        "lat": 7.0669162,
+        "lon": 125.6199545
+    },
+    {
+        "name": "Barangay 22-C",
+        "lat": 7.0691926,
+        "lon": 125.6213954
+    },
+    {
+        "name": "Barangay 25-C",
+        "lat": 7.0698394,
+        "lon": 125.6193581
+    },
+    {
+        "name": "Barangay 28-C",
+        "lat": 7.0724986,
+        "lon": 125.6187102
+    },
+    {
+        "name": "Barangay 29-C",
+        "lat": 7.0722997,
+        "lon": 125.6148213
+    },
+    {
+        "name": "Barangay 3-A",
+        "lat": 7.0677857,
+        "lon": 125.6068583
+    },
+    {
+        "name": "Barangay 30-C",
+        "lat": 7.0752409,
+        "lon": 125.6150233
+    },
+    {
+        "name": "Barangay 32-D",
+        "lat": 7.0710896,
+        "lon": 125.6143599
+    },
+    {
+        "name": "Barangay 34-D",
+        "lat": 7.0701795,
+        "lon": 125.6117267
+    },
+    {
+        "name": "Barangay 35-D",
+        "lat": 7.0664792,
+        "lon": 125.6112954
+    },
+    {
+        "name": "Barangay 36-D",
+        "lat": 7.0653649,
+        "lon": 125.6137751
+    },
+    {
+        "name": "Barangay 37-D",
+        "lat": 7.0640579,
+        "lon": 125.613984
+    },
+    {
+        "name": "Barangay 38-D",
+        "lat": 7.0645802,
+        "lon": 125.6109277
+    },
+    {
+        "name": "Barangay 39-D",
+        "lat": 7.0622519,
+        "lon": 125.610361
+    },
+    {
+        "name": "Barangay 4-A",
+        "lat": 7.0717432,
+        "lon": 125.6085649
+    },
+    {
+        "name": "Barangay 40-D",
+        "lat": 7.0602035,
+        "lon": 125.6088047
+    },
+    {
+        "name": "Barangay 8-A",
+        "lat": 7.0766396,
+        "lon": 125.5961433
+    },
+    {
+        "name": "Barangay 9-A",
+        "lat": 7.0809187,
+        "lon": 125.6003204
+    },
+    {
+        "name": "Buda",
+        "lat": 7.5172239,
+        "lon": 125.2388888
+    },
+    {
+        "name": "Cadalian",
+        "lat": 7.1485651,
+        "lon": 125.3760313
+    },
+    {
+        "name": "Calinan Poblacion",
+        "lat": 7.1907961,
+        "lon": 125.4558004
+    },
+    {
+        "name": "Carmen",
+        "lat": 7.1165663,
+        "lon": 125.3461349
+    },
+    {
+        "name": "Catalunan Grande",
+        "lat": 7.0862835,
+        "lon": 125.5294535
+    },
+    {
+        "name": "Catalunan Peque\u00f1o",
+        "lat": 7.0752589,
+        "lon": 125.5228626
+    },
+    {
+        "name": "Centro",
+        "lat": 7.091446,
+        "lon": 125.63844
+    },
+    {
+        "name": "Colosas",
+        "lat": 7.4990674,
+        "lon": 125.5128399
+    },
+    {
+        "name": "Dalag Lumot",
+        "lat": 7.2536627,
+        "lon": 125.2486744
+    },
+    {
+        "name": "Dalagdag",
+        "lat": 7.2481102,
+        "lon": 125.5066753
+    },
+    {
+        "name": "Datu Salumay",
+        "lat": 7.4932577,
+        "lon": 125.2647843
+    },
+    {
+        "name": "Dominga",
+        "lat": 7.2557876,
+        "lon": 125.4886776
+    },
+    {
+        "name": "Dumoy",
+        "lat": 7.029438,
+        "lon": 125.5134657
+    },
+    {
+        "name": "Fatima",
+        "lat": 7.2889899,
+        "lon": 125.5246624
+    },
+    {
+        "name": "Gumalang",
+        "lat": 7.2210175,
+        "lon": 125.4014199
+    },
+    {
+        "name": "Gumitan",
+        "lat": 7.4327988,
+        "lon": 125.3601839
+    },
+    {
+        "name": "Inayangan",
+        "lat": 7.275228,
+        "lon": 125.4440526
+    },
+    {
+        "name": "Kapitan Tomas Monteverde Sr.",
+        "lat": 7.079619,
+        "lon": 125.6220879
+    },
+    {
+        "name": "Lacson",
+        "lat": 7.2179521,
+        "lon": 125.4367422
+    },
+    {
+        "name": "Lamanan",
+        "lat": 7.2876305,
+        "lon": 125.4360405
+    },
+    {
+        "name": "Lampiano",
+        "lat": 7.2169407,
+        "lon": 125.5191126
+    },
+    {
+        "name": "Langub",
+        "lat": 7.1068037,
+        "lon": 125.5604817
+    },
+    {
+        "name": "Lapu-Lapu",
+        "lat": 7.0979275,
+        "lon": 125.6434141
+    },
+    {
+        "name": "Leon Garcia Sr.",
+        "lat": 7.0816206,
+        "lon": 125.6273475
+    },
+    {
+        "name": "Lumiad",
+        "lat": 7.3900228,
+        "lon": 125.4609837
+    },
+    {
+        "name": "Ma-a",
+        "lat": 7.0832031,
+        "lon": 125.586739
+    },
+    {
+        "name": "Mabuhay",
+        "lat": 7.3323454,
+        "lon": 125.5315344
+    },
+    {
+        "name": "Magsaysay",
+        "lat": 7.3084461,
+        "lon": 125.2779525
+    },
+    {
+        "name": "Magtuod",
+        "lat": 7.1218436,
+        "lon": 125.5680621
+    },
+    {
+        "name": "Malabog",
+        "lat": 7.3699559,
+        "lon": 125.4392002
+    },
+    {
+        "name": "Malagos",
+        "lat": 7.1848348,
+        "lon": 125.4255018
+    },
+    {
+        "name": "Malamba",
+        "lat": 7.4056087,
+        "lon": 125.3336148
+    },
+    {
+        "name": "Mapula",
+        "lat": 7.4469915,
+        "lon": 125.4401047
+    },
+    {
+        "name": "Marilog Proper",
+        "lat": 7.3751807,
+        "lon": 125.2914736
+    },
+    {
+        "name": "Matina Pangi",
+        "lat": 7.0788125,
+        "lon": 125.566485
+    },
+    {
+        "name": "Megkawayan",
+        "lat": 7.3125788,
+        "lon": 125.4371491
+    },
+    {
+        "name": "Paciano Bangoy",
+        "lat": 7.0906475,
+        "lon": 125.6195661
+    },
+    {
+        "name": "Pandaitan",
+        "lat": 7.4049804,
+        "lon": 125.5163884
+    },
+    {
+        "name": "Paquibato Proper",
+        "lat": 7.3819252,
+        "lon": 125.4843793
+    },
+    {
+        "name": "Paradise Embac",
+        "lat": 7.3618811,
+        "lon": 125.5236966
+    },
+    {
+        "name": "Pa\u00f1alum",
+        "lat": 7.3451861,
+        "lon": 125.499726
+    },
+    {
+        "name": "Rafael Castillo",
+        "lat": 7.0989528,
+        "lon": 125.6375732
+    },
+    {
+        "name": "Salapawan",
+        "lat": 7.4613731,
+        "lon": 125.471581
+    },
+    {
+        "name": "Salaysay",
+        "lat": 7.2260009,
+        "lon": 125.2653131
+    },
+    {
+        "name": "Saloy",
+        "lat": 7.2888289,
+        "lon": 125.4112413
+    },
+    {
+        "name": "San Antonio",
+        "lat": 7.0948204,
+        "lon": 125.6308727
+    },
+    {
+        "name": "Sirib",
+        "lat": 7.1157388,
+        "lon": 125.3888458
+    },
+    {
+        "name": "Suawan",
+        "lat": 7.2394354,
+        "lon": 125.3361915
+    },
+    {
+        "name": "Sumimao",
+        "lat": 7.2942033,
+        "lon": 125.4803232
+    },
+    {
+        "name": "Talomo Proper",
+        "lat": 7.0561567,
+        "lon": 125.5506491
+    },
+    {
+        "name": "Tamayong",
+        "lat": 7.1101759,
+        "lon": 125.3593195
+    },
+    {
+        "name": "Tambobong",
+        "lat": 7.1892563,
+        "lon": 125.3177817
+    },
+    {
+        "name": "Tamugan",
+        "lat": 7.2928199,
+        "lon": 125.3733458
+    },
+    {
+        "name": "Tapak",
+        "lat": 7.5482933,
+        "lon": 125.4084807
+    },
+    {
+        "name": "Tawan-Tawan",
+        "lat": 7.1537473,
+        "lon": 125.346959
+    },
+    {
+        "name": "Ubalde",
+        "lat": 7.0947266,
+        "lon": 125.6351339
+    },
+    {
+        "name": "Vicente Duterte",
+        "lat": 7.0882255,
+        "lon": 125.6321614
+    },
+    {
+        "name": "Wilfredo C. Aquino",
+        "lat": 7.0935972,
+        "lon": 125.6244848
+    },
+    {
+        "name": "Wines",
+        "lat": 7.1996109,
+        "lon": 125.3872204
+    }
+]
