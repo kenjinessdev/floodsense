@@ -39,10 +39,13 @@ export async function reverseGeocode(
             });
 
         if (!response.data.results || response.data.results.length === 0) {
-            return "Unknown location";
+            return "Reverse geocoding is unavailable as of the moment.";
         }
 
-        return response.data.results[0]?.formatted || "Unknown location";
+        return (
+            response.data.results[0]?.formatted ||
+            "Reverse geocoding is unavailable as of the moment."
+        );
     } catch {
         throw new Error("Reverse geocoding failed");
     }

@@ -44,8 +44,9 @@ export function MapComponent({
     const markerRef = useRef<L.Marker | null>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const boundaryRef = useRef<Array<[number, number]> | null>(null);
-    const [selectedAddress, setSelectedAddress] =
-        useState<string>("Unknown location");
+    const [selectedAddress, setSelectedAddress] = useState<string>(
+        "Reverse geocoding is unavailable as of the moment.",
+    );
 
     const isPointInPolygon = (
         lat: number,
@@ -154,7 +155,9 @@ export function MapComponent({
                 })
                 .catch((error: unknown) => {
                     console.error("Reverse geocoding error:", error);
-                    setSelectedAddress("Unknown location");
+                    setSelectedAddress(
+                        "Reverse geocoding is unavailable as of the moment.",
+                    );
                 });
         });
 
@@ -238,7 +241,9 @@ export function MapComponent({
                         })
                         .catch((error: unknown) => {
                             console.error("Reverse geocoding error:", error);
-                            setSelectedAddress("Unknown location");
+                            setSelectedAddress(
+                                "Reverse geocoding is unavailable as of the moment.",
+                            );
                         });
 
                     mapRef.current?.setView([latitude, longitude], 14);
