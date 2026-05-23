@@ -273,7 +273,7 @@ export function MapComponent({
                 <Button
                     onClick={handleMyLocation}
                     disabled={isAnalyzing}
-                    className="bg-white text-gray-900 hover:bg-gray-100 shadow-lg"
+                    variant="secondary"
                     size="sm"
                 >
                     <MapPin className="mr-1.5 h-4 w-4" />
@@ -283,9 +283,9 @@ export function MapComponent({
 
             {/* Loading overlay */}
             {isAnalyzing && (
-                <div className="absolute inset-0 bg-black/40 z-999 flex items-center justify-center">
-                    <div className="bg-white rounded-xl p-6 shadow-xl flex items-center gap-3">
-                        <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                <div className="absolute inset-0 bg-foreground/40 z-999 flex items-center justify-center">
+                    <div className="bg-card rounded-xl p-6 shadow-xl flex items-center gap-3">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
                         <span className="font-medium">
                             Analyzing location...
                         </span>

@@ -9,7 +9,7 @@ import { RegionalContext } from "@/components/factor-analysis";
 import { Interpretation } from "@/components/interpretation";
 import { ModelComparison } from "@/components/model-comparison";
 import { predictFloodRisk } from "@/lib/api";
-import { ArrowLeft, Download, AlertCircle } from "lucide-react";
+import { ArrowLeft, Download, AlertCircle, AlertTriangle, HardHat, Bell, Zap, CheckCircle2, Info } from "lucide-react";
 
 const coordinateSchema = z
     .union([z.number(), z.string()])
@@ -49,23 +49,22 @@ function ResultComponent() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+        <div className="min-h-screen bg-background">
             {/* Header */}
-            <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60">
+            <header className="border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                                🌊 Flood Risk Assessment
+                            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                                Flood Risk Assessment
                             </h1>
-                            <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">
+                            <p className="text-sm md:text-base text-muted-foreground mt-1">
                                 Location: {lat.toFixed(6)}, {lng.toFixed(6)}
                             </p>
                         </div>
                         <Button
                             onClick={handleBack}
                             variant="outline"
-                            className="border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
                         >
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to Map
@@ -103,9 +102,9 @@ function ResultComponent() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column - Risk Gauge */}
                     <div className="lg:col-span-1">
-                        <Card className="sticky top-4 border-slate-200 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-900">
+                        <Card className="sticky top-4 shadow-xl">
                             <CardHeader>
-                                <CardTitle className="text-slate-900 dark:text-slate-100">
+                                <CardTitle className="text-foreground">
                                     Flood Susceptibility
                                 </CardTitle>
                             </CardHeader>
@@ -134,7 +133,7 @@ function ResultComponent() {
                                             <Button
                                                 onClick={handleDownload}
                                                 variant="outline"
-                                                className="w-full border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
+                                                    className="w-full"
                                             >
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Download Report
@@ -142,7 +141,7 @@ function ResultComponent() {
                                         </div>
                                     </>
                                 ) : (
-                                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                                    <p className="text-sm text-muted-foreground">
                                         Prediction data is unavailable.
                                     </p>
                                 )}
@@ -175,46 +174,24 @@ function ResultComponent() {
                                     riskLevel={data.ensemble.risk_level}
                                 />
 
-                                <Card className="border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50">
-                                    <CardHeader>
-                                        <CardTitle className="text-lg text-slate-900 dark:text-slate-100">
-                                            🔬 Methodology
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="text-sm text-slate-700 dark:text-slate-300 space-y-2">
-                                        <p>
-                                            <strong>Ensemble Model:</strong>{" "}
-                                            Combines Random Forest and XGBoost
-                                            via stacking for higher accuracy
-                                            (AUC 0.87+).
-                                        </p>
-                                        <p>
-                                            <strong>Random Forest:</strong>{" "}
-                                            Stability through bagging and
-                                            majority voting from 100 decision
-                                            trees.
-                                        </p>
-                                        <p>
-                                            <strong>XGBoost:</strong> Precision
-                                            through gradient boosting with
-                                            sequential error correction.
-                                        </p>
-                                        <p>
-                                            <strong>Training Data:</strong>{" "}
-                                            Flooded and unflooded points from
-                                            Davao City using 8 key conditioning
-                                            factors.
-                                        </p>
-                                        <p className="text-xs text-gray-500 mt-4">
-                                            Assessment generated at:{" "}
-                                            {new Date().toLocaleString()}
-                                        </p>
-                                    </CardContent>
-                                </Card>
+                                <div className="flex items-center justify-between rounded-lg border bg-card p-4 text-sm">
+                                    <p className="text-muted-foreground">
+                                        Trained on flooded and unflooded points
+                                        from Davao City using 8 conditioning factors.
+                                    </p>
+                                    <Button
+                                        onClick={handleBack}
+                                        variant="outline"
+                                        size="sm"
+                                    >
+                                        <ArrowLeft className="mr-1.5 h-3 w-3" />
+                                        New Analysis
+                                    </Button>
+                                </div>
                             </>
                         ) : (
-                            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                                <CardContent className="pt-6 text-sm text-slate-600 dark:text-slate-400">
+                            <Card>
+                                <CardContent className="pt-6 text-sm text-muted-foreground">
                                     No prediction result to display yet.
                                 </CardContent>
                             </Card>
@@ -231,29 +208,26 @@ function Recommendations({ riskLevel }: { riskLevel: string }) {
     const isModerate = riskLevel === "Moderate";
 
     return (
-        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <Card>
             <CardHeader>
-                <CardTitle className="text-lg text-slate-900 dark:text-slate-100">
-                    💡 Recommendations
+                <CardTitle className="text-lg">
+                    Recommendations
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <div className="space-y-3 text-sm text-muted-foreground">
                     {isHighRisk ? (
                         <>
-                            <RecommendationItem icon="⚠️" color="text-red-600">
+                            <RecommendationItem icon={<AlertTriangle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />}>
                                 High flood susceptibility detected. Consider
                                 flood mitigation measures if planning
                                 construction or development.
                             </RecommendationItem>
-                            <RecommendationItem
-                                icon="🏗️"
-                                color="text-orange-600"
-                            >
+                            <RecommendationItem icon={<HardHat className="h-4 w-4 text-orange-600 shrink-0 mt-0.5" />}>
                                 Implement elevated foundations, proper drainage
                                 systems, and flood-resistant building materials.
                             </RecommendationItem>
-                            <RecommendationItem icon="🚨" color="text-blue-600">
+                            <RecommendationItem icon={<Bell className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />}>
                                 Stay informed about weather conditions and have
                                 an emergency evacuation plan during monsoon
                                 season.
@@ -261,32 +235,23 @@ function Recommendations({ riskLevel }: { riskLevel: string }) {
                         </>
                     ) : isModerate ? (
                         <>
-                            <RecommendationItem
-                                icon="⚡"
-                                color="text-yellow-600"
-                            >
+                            <RecommendationItem icon={<Zap className="h-4 w-4 text-yellow-600 shrink-0 mt-0.5" />}>
                                 Moderate risk detected. Consider preventive
                                 measures such as improved drainage systems.
                             </RecommendationItem>
-                            <RecommendationItem
-                                icon="✅"
-                                color="text-green-600"
-                            >
+                            <RecommendationItem icon={<CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />}>
                                 Monitor local weather patterns and maintain
                                 awareness during heavy rainfall events.
                             </RecommendationItem>
                         </>
                     ) : (
                         <>
-                            <RecommendationItem
-                                icon="✅"
-                                color="text-green-600"
-                            >
+                            <RecommendationItem icon={<CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />}>
                                 Low flood risk detected. This location appears
                                 relatively safe based on terrain and
                                 environmental factors.
                             </RecommendationItem>
-                            <RecommendationItem icon="ℹ️" color="text-blue-600">
+                            <RecommendationItem icon={<Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />}>
                                 Continue to maintain awareness of extreme
                                 weather events and local conditions.
                             </RecommendationItem>
@@ -300,16 +265,14 @@ function Recommendations({ riskLevel }: { riskLevel: string }) {
 
 function RecommendationItem({
     icon,
-    color,
     children,
 }: {
-    icon: string;
-    color: string;
+    icon: React.ReactNode;
     children: React.ReactNode;
 }) {
     return (
         <div className="flex gap-2">
-            <span className={`font-semibold ${color}`}>{icon}</span>
+            {icon}
             <p>{children}</p>
         </div>
     );

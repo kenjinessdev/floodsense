@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { FileText } from "lucide-react";
 
 interface InterpretationProps {
     riskLevel: string;
@@ -42,13 +43,14 @@ export function Interpretation({ riskLevel, probability }: InterpretationProps) 
     const { summary, detail } = getInterpretation(riskLevel, probability);
 
     return (
-        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <Card>
             <CardHeader>
-                <CardTitle className="text-lg text-slate-900 dark:text-slate-100">
-                    📋 Interpretation
+                <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    Interpretation
                 </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
                 <p className="font-medium text-base">
                     <span
                         className="inline-block px-2 py-0.5 rounded-full text-white text-sm font-semibold mr-1"
@@ -68,7 +70,7 @@ export function Interpretation({ riskLevel, probability }: InterpretationProps) 
                     {summary}
                 </p>
                 <p>{detail}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <p className="text-xs text-muted-foreground pt-2 border-t border-border">
                     This interpretation is based on the ensemble model's
                     assessment of terrain and environmental conditioning
                     factors.
