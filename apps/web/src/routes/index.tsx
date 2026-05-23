@@ -4,7 +4,9 @@ import { MapComponent } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Info, AlertCircle } from "lucide-react";
+import { ChevronDown, ChevronRight, Info, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { DISTRICT_LANDMARKS, type Landmark } from "@/lib/landmarks";
 
 interface DistrictCentroid {
     name: string;
@@ -56,6 +58,7 @@ function HomeComponent() {
     const [goToRegionTarget, setGoToRegionTarget] =
         useState<GoToRegionTarget | null>(null);
     const [districtQuery, setDistrictQuery] = useState("");
+    const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
 
     useEffect(() => {
         const loadQuickNavDistricts = async () => {
@@ -149,6 +152,22 @@ function HomeComponent() {
             center: region.center,
             zoom: region.zoom,
             requestId: Date.now(),
+        });
+    };
+
+    const handleLandmarkClick = (landmark: Landmark) => {
+        setSelectedLocation({ lat: landmark.lat, lng: landmark.lng });
+        setGoToRegionTarget({
+            center: [landmark.lat, landmark.lng],
+            zoom: 16,
+            requestId: Date.now(),
+        });
+        navigate({
+            to: "/result",
+            search: {
+                lat: landmark.lat,
+                lng: landmark.lng,
+            },
         });
     };
 
@@ -344,23 +363,94 @@ function HomeComponent() {
                                                 No matching districts.
                                             </p>
                                         ) : (
-                                            <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                                            <div className="space-y-1 max-h-80 overflow-y-auto pr-1">
                                                 {filteredQuickNavDistricts.map(
-                                                    (region) => (
-                                                        <Button
-                                                            key={region.name}
-                                                            onClick={() =>
-                                                                handleGoToDistrict(
-                                                                    region,
-                                                                )
-                                                            }
-                                                            variant="outline"
-                                                            size="xs"
-                                                            className="justify-start"
-                                                        >
-                                                            {region.name}
-                                                        </Button>
-                                                    ),
+                                                    (region) => {
+                                                        const landmarks =
+                                                            DISTRICT_LANDMARKS.find(
+                                                                (dl) =>
+                                                                    dl.district ===
+                                                                    region.name,
+                                                            )?.landmarks ?? [];
+                                                        const isExpanded =
+                                                            expandedDistrict ===
+                                                            region.name;
+                                                        return (
+                                                            <div
+                                                                key={
+                                                                    region.name
+                                                                }
+                                                            >
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setExpandedDistrict(
+                                                                            isExpanded
+                                                                                ? null
+                                                                                : region.name,
+                                                                        );
+                                                                    }}
+                                                                    className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                                                                >
+                                                                    <span className="font-medium">
+                                                                        {
+                                                                            region.name
+                                                                        }
+                                                                    </span>
+                                                                    {isExpanded ? (
+                                                                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                                                    ) : (
+                                                                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                                                    )}
+                                                                </button>
+                                                                {isExpanded &&
+                                                                    landmarks.length >
+                                                                        0 && (
+                                                                        <div className="ml-3 mt-1 space-y-0.5 border-l-2 border-border pl-2">
+                                                                            {landmarks.map(
+                                                                                (
+                                                                                    landmark,
+                                                                                ) => (
+                                                                                    <button
+                                                                                        key={
+                                                                                            landmark.name
+                                                                                        }
+                                                                                        onClick={() =>
+                                                                                            handleLandmarkClick(
+                                                                                                landmark,
+                                                                                            )
+                                                                                        }
+                                                                                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors text-left"
+                                                                                    >
+                                                                                        <span
+                                                                                            className={`inline-block h-2 w-2 shrink-0 rounded-full ${landmark.floodTag === "historically_flooded" ? "bg-red-500" : "bg-green-500"}`}
+                                                                                        />
+                                                                                        <span className="flex-1 truncate">
+                                                                                            {
+                                                                                                landmark.name
+                                                                                            }
+                                                                                        </span>
+                                                                                        <Badge
+                                                                                            variant={
+                                                                                                landmark.floodTag ===
+                                                                                                "historically_flooded"
+                                                                                                    ? "destructive"
+                                                                                                    : "secondary"
+                                                                                            }
+                                                                                            className="text-[10px] px-1.5 py-0 leading-none"
+                                                                                        >
+                                                                                            {landmark.floodTag ===
+                                                                                            "historically_flooded"
+                                                                                                ? "Flooded"
+                                                                                                : "Not Flooded"}
+                                                                                        </Badge>
+                                                                                    </button>
+                                                                                ),
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                            </div>
+                                                        );
+                                                    },
                                                 )}
                                             </div>
                                         )}
