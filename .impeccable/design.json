@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-23T10:21:00.000Z",
+  "title": "Design System: FloodSense",
+  "extensions": {
+    "colorMeta": {
+      "brand-ocean": { "role": "primary", "displayName": "Ocean Teal", "canonical": "oklch(0.55 0.14 195)", "tonalRamp": ["oklch(0.15 0.035 195)", "oklch(0.25 0.06 195)", "oklch(0.35 0.09 195)", "oklch(0.45 0.12 195)", "oklch(0.55 0.14 195)", "oklch(0.65 0.12 195)", "oklch(0.78 0.08 195)", "oklch(0.92 0.04 195)"] },
+      "background": { "role": "neutral", "displayName": "White Surface", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(0.15 0 0)", "oklch(0.25 0 0)", "oklch(0.35 0 0)", "oklch(0.55 0 0)", "oklch(0.75 0 0)", "oklch(0.85 0 0)", "oklch(0.95 0 0)", "oklch(1 0 0)"] },
+      "foreground": { "role": "neutral", "displayName": "Near-Black Text", "canonical": "oklch(0.145 0 0)", "tonalRamp": ["oklch(0.1 0 0)", "oklch(0.145 0 0)", "oklch(0.25 0 0)", "oklch(0.35 0 0)", "oklch(0.55 0 0)", "oklch(0.75 0 0)", "oklch(0.85 0 0)", "oklch(0.95 0 0)"] },
+      "danger": { "role": "semantic", "displayName": "Muted Rose", "canonical": "oklch(0.58 0.22 27)", "tonalRamp": ["oklch(0.15 0.05 27)", "oklch(0.25 0.09 27)", "oklch(0.35 0.14 27)", "oklch(0.45 0.18 27)", "oklch(0.58 0.22 27)", "oklch(0.68 0.16 27)", "oklch(0.8 0.1 27)", "oklch(0.93 0.04 27)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles and hero percentage values." },
+      "title": { "displayName": "Title", "purpose": "Card headers and section titles." },
+      "body": { "displayName": "Body", "purpose": "Primary reading text, card content." },
+      "label": { "displayName": "Label", "purpose": "Small labels, factor names, metric units." }
+    },
+    "shadows": [
+      { "name": "card-rest", "value": "0 4px 24px oklch(0 0 0 / 0.06)", "purpose": "Default card elevation." },
+      { "name": "card-hover", "value": "0 8px 32px oklch(0 0 0 / 0.10)", "purpose": "Interactive card hover state." },
+      { "name": "modal", "value": "0 20px 60px oklch(0 0 0 / 0.15)", "purpose": "Highest elevation for dialogs and toasts." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for state transitions." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary call-to-action. One per view. Used for the Analyze Location action.",
+      "html": "<button class=\"ds-btn-primary\">Analyze Location</button>",
+      "css": ".ds-btn-primary { background: oklch(0.55 0.14 195); color: #fff; font-family: 'Inter Variable', system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; line-height: 1.5; } .ds-btn-primary:hover { background: oklch(0.48 0.14 195); box-shadow: 0 4px 24px oklch(0 0 0 / 0.06); } .ds-btn-primary:focus-visible { outline: 2px solid oklch(0.708 0 0); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outlined Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action button. Used for Back to Map, About, and cancel actions.",
+      "html": "<button class=\"ds-btn-outline\">Back to Map</button>",
+      "css": ".ds-btn-outline { background: transparent; color: oklch(0.145 0 0); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; padding: 0.5rem 1rem; border: 1px solid oklch(0.922 0 0); border-radius: 0.5rem; cursor: pointer; transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; line-height: 1.5; } .ds-btn-outline:hover { background: oklch(0.97 0 0); } .ds-btn-outline:focus-visible { outline: 2px solid oklch(0.708 0 0); outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Standard content container. Used for the risk gauge, factor breakdown, and recommendations.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\"><div class=\"ds-card-title\">Flood Susceptibility</div></div><div class=\"ds-card-content\"><div style=\"font-size: 3.75rem; font-weight: 800; color: oklch(0.58 0.22 27); text-align: center;\">97%</div><div style=\"text-align: center; font-size: 0.75rem; color: oklch(0.556 0 0); margin-top: 0.5rem;\">Flood Probability</div></div></div>",
+      "css": ".ds-card { background: oklch(1 0 0); border-radius: 1rem; box-shadow: 0 4px 24px oklch(0 0 0 / 0.06); font-family: 'Inter Variable', system-ui, sans-serif; padding: 0; overflow: hidden; } .ds-card-header { padding: 1rem 1rem 0.25rem 1rem; } .ds-card-title { font-size: 0.9375rem; font-weight: 600; color: oklch(0.145 0 0); } .ds-card-content { padding: 0.25rem 1rem 1rem 1rem; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Text input field used for searching districts in the sidebar.",
+      "html": "<div style=\"position: relative;\"><svg style=\"position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: oklch(0.556 0 0);\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-input\" placeholder=\"Search district...\" style=\"padding-left: 2rem;\"></div>",
+      "css": ".ds-input { background: transparent; color: oklch(0.145 0 0); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 0.75rem; border: 1px solid oklch(0.922 0 0); border-radius: 0.5rem; padding: 0.5rem 0.625rem; height: 2rem; width: 100%; box-sizing: border-box; transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: oklch(0.556 0 0); } .ds-input:focus { border-color: oklch(0.708 0 0); outline: none; box-shadow: 0 0 0 1px oklch(0.708 0 0 / 0.5); }"
+    },
+    {
+      "name": "Risk Badge",
+      "kind": "chip",
+      "refersTo": "chip-risk",
+      "description": "Risk level indicator pill. Color varies by severity: green, amber, orange, or rose.",
+      "html": "<span class=\"ds-chip-risk\">High Susceptibility</span>",
+      "css": ".ds-chip-risk { display: inline-flex; align-items: center; background: oklch(0.9 0.06 45); color: oklch(0.35 0.14 45); font-family: 'Inter Variable', system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; padding: 0.125rem 0.625rem; border-radius: 9999px; white-space: nowrap; line-height: 1.4; }"
+    },
+    {
+      "name": "Risk Gauge",
+      "kind": "custom",
+      "refersTo": "risk-gauge",
+      "description": "The signature component. A typography-dominant risk display with percentage, label, and legend. Replaces the hero-metric template with typographic weight.",
+      "html": "<div class=\"ds-risk-gauge\"><div class=\"ds-risk-pct\">97%</div><div class=\"ds-risk-label\">Flood Probability</div><div class=\"ds-risk-badge\" style=\"background: oklch(0.58 0.22 27);\">Very High — Flooded</div><div class=\"ds-risk-legend\"><div class=\"ds-risk-tag\" style=\"background: oklch(0.93 0.04 160); color: oklch(0.35 0.12 160);\"><span style=\"background: oklch(0.62 0.15 160); width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block;\"></span> Low (0-25%)</div><div class=\"ds-risk-tag\" style=\"background: oklch(0.93 0.05 75); color: oklch(0.4 0.14 75);\"><span style=\"background: oklch(0.7 0.16 75); width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block;\"></span> Moderate (25-50%)</div><div class=\"ds-risk-tag\" style=\"background: oklch(0.92 0.06 45); color: oklch(0.35 0.14 45);\"><span style=\"background: oklch(0.65 0.18 45); width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block;\"></span> High (50-75%)</div><div class=\"ds-risk-tag\" style=\"background: oklch(0.92 0.04 27); color: oklch(0.35 0.14 27);\"><span style=\"background: oklch(0.58 0.22 27); width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block;\"></span> Very High (75-100%)</div></div></div>",
+      "css": ".ds-risk-gauge { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; font-family: 'Inter Variable', system-ui, sans-serif; text-align: center; } .ds-risk-pct { font-size: 3.75rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: oklch(0.58 0.22 27); } .ds-risk-label { font-size: 0.875rem; color: oklch(0.556 0 0); font-weight: 500; } .ds-risk-badge { padding: 0.75rem 2rem; border-radius: 9999px; font-weight: 600; font-size: 1rem; color: #fff; box-shadow: 0 4px 14px oklch(0.58 0.22 27 / 0.33); } .ds-risk-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%; font-size: 0.75rem; } .ds-risk-tag { display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.75rem; border-radius: 9999px; font-weight: 500; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Barangay Resilience Guide",
+    "overview": "Davao FloodSense is a public service tool, not a commercial dashboard. It feels approachable and trustworthy, like a community notice board that happens to be powered by machine learning. The interface is clean and confident, with a warm ocean accent that connects the tool to Davao's coastal identity without feeling thematic or decorative. The system explicitly rejects the generic SaaS dashboard: no gray sidebars, no metric card grids, no gradient text, no glassmorphism. Information is organized around the map, which is the primary interface. Cards float with a gentle shadow that signals depth without competing with the content. Every element earns its place.",
+    "keyCharacteristics": [
+      "Map-first. The sidebar supports location selection, not the other way around.",
+      "Warm restraint. A single teal accent used sparingly (under 10% of any screen). Neutrals are achromatic.",
+      "Gentle shadow vocabulary. Cards are lifted but not floating, with soft diffused shadows.",
+      "Interpreted data, not raw values. Users are told what the risk means in plain language."
+    ],
+    "rules": [
+      { "name": "The Minimal Palette Rule", "body": "The teal accent covers under 10% of any screen. Color is a scarce resource; its rarity is the point. If a screen has more than two functional colors (accent + one semantic), something is wrong.", "section": "colors" },
+      { "name": "The Semantic Pledge", "body": "Risk levels use shape, position, and text label in addition to color. Red and green are never the only differentiator. The gauge legend, the badge text, and the factor breakdown all encode risk level redundantly.", "section": "colors" },
+      { "name": "The Flat Hierarchy Rule", "body": "Three functional sizes (title, body, label) plus one display size for hero emphasis. No intermediate sizes. Scale contrast does the work.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only as a response to hierarchy or interaction.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the teal accent sparingly: one element per view at most.",
+      "Do let the map occupy the majority of the screen. The sidebar is a reference panel, not a navigation column.",
+      "Do use semantic color redundantly with text labels and position for risk levels.",
+      "Do prefer flat surfaces with gentle shadows over bordered containers.",
+      "Do keep card content tight: one title, one value or short description, one optional action.",
+      "Do use the full risk gauge legend (all four tiers) so users always see the scale."
+    ],
+    "donts": [
+      "Don't use gradient text, glassmorphism, or heavy animations.",
+      "Don't use side-stripe borders as colored accents on cards. Use full background tints or nothing.",
+      "Don't build metric card grids. This is not a business analytics dashboard.",
+      "Don't show raw extracted values to the user. Interpret the data instead.",
+      "Don't use a sidebar navigation pattern. The map is the interface.",
+      "Don't use em dashes in copy.",
+      "Don't nest cards.",
+      "Don't use modals as a first resort. Prefer inline expansion or a dedicated route."
+    ]
+  }
+}

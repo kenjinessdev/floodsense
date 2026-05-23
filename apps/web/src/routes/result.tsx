@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RiskGauge } from "@/components/risk-gauge";
-import { FactorAnalysis } from "@/components/factor-analysis";
+import { RegionalContext } from "@/components/factor-analysis";
+import { Interpretation } from "@/components/interpretation";
 import { ModelComparison } from "@/components/model-comparison";
 import { predictFloodRisk } from "@/lib/api";
 import { ArrowLeft, Download, AlertCircle } from "lucide-react";
@@ -163,9 +164,12 @@ function ResultComponent() {
                                     ensemble={data.ensemble}
                                 />
 
-                                <FactorAnalysis
-                                    extractedValues={data.extracted_values}
+                                <Interpretation
+                                    riskLevel={data.ensemble.risk_level}
+                                    probability={data.ensemble.probability}
                                 />
+
+                                <RegionalContext />
 
                                 <Recommendations
                                     riskLevel={data.ensemble.risk_level}
