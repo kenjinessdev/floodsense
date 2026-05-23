@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, ChevronRight, Info, AlertCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { DISTRICT_LANDMARKS, type Landmark } from "@/lib/landmarks";
 
 interface DistrictCentroid {
@@ -421,28 +420,11 @@ function HomeComponent() {
                                                                                         }
                                                                                         className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors text-left"
                                                                                     >
-                                                                                        <span
-                                                                                            className={`inline-block h-2 w-2 shrink-0 rounded-full ${landmark.floodTag === "historically_flooded" ? "bg-red-500" : "bg-green-500"}`}
-                                                                                        />
                                                                                         <span className="flex-1 truncate">
                                                                                             {
                                                                                                 landmark.name
                                                                                             }
                                                                                         </span>
-                                                                                        <Badge
-                                                                                            variant={
-                                                                                                landmark.floodTag ===
-                                                                                                "historically_flooded"
-                                                                                                    ? "destructive"
-                                                                                                    : "secondary"
-                                                                                            }
-                                                                                            className="text-[10px] px-1.5 py-0 leading-none"
-                                                                                        >
-                                                                                            {landmark.floodTag ===
-                                                                                            "historically_flooded"
-                                                                                                ? "Flooded"
-                                                                                                : "Not Flooded"}
-                                                                                        </Badge>
                                                                                     </button>
                                                                                 ),
                                                                             )}
