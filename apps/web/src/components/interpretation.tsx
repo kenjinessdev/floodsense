@@ -6,42 +6,74 @@ interface InterpretationProps {
     probability: number;
 }
 
-function getInterpretation(riskLevel: string, probability: number) {
-    const pct = Math.round(probability * 100);
-
-    if (riskLevel === "Very High") {
-        return {
-            summary: "This location has a very high susceptibility to flooding.",
-            detail:
-                "The terrain and environmental factors in this area indicate that flooding is likely during significant rainfall events. This area requires careful planning and flood mitigation measures.",
-        };
+function pillColorForRisk(riskLevel: string): string {
+    switch (riskLevel) {
+        case "Very High":
+            return "#dc2626";
+        case "High":
+            return "#ef4444";
+        case "Moderate":
+            return "#f59e0b";
+        case "Low":
+            return "#10b981";
+        case "Very Low":
+            return "#10b981";
+        default:
+            return "#6b7280";
     }
-    if (riskLevel === "High") {
-        return {
-            summary: "This location has a high susceptibility to flooding.",
-            detail:
-                "The characteristics of this area suggest a elevated flood risk. Consider this when planning construction or infrastructure improvements.",
-        };
-    }
-    if (riskLevel === "Moderate") {
-        return {
-            summary: "This location has a moderate susceptibility to flooding.",
-            detail:
-                "While not the highest risk, this area may still experience flooding during extreme weather events. Standard precautionary measures are recommended.",
-        };
-    }
-
-    return {
-        summary:
-            "This location has a low susceptibility to flooding.",
-        detail:
-            "Based on the surrounding terrain and environmental factors, this area is relatively safe from flooding under normal conditions. Always remain aware of extreme weather warnings.",
-    };
 }
 
-export function Interpretation({ riskLevel, probability }: InterpretationProps) {
-    const { summary, detail } = getInterpretation(riskLevel, probability);
+function susceptibilityPhrase(riskLevel: string): string {
+    switch (riskLevel) {
+        case "Very High":
+            return "very high susceptibility to flooding";
+        case "High":
+            return "high susceptibility to flooding";
+        case "Moderate":
+            return "moderate susceptibility to flooding";
+        default:
+            return "low susceptibility to flooding";
+    }
+}
 
+function renderDetail(riskLevel: string) {
+    if (riskLevel === "Very High") {
+        return (
+            <>
+                The terrain and environmental factors in this area indicate that
+                flooding is likely during significant rainfall events. This area
+                requires <strong>careful planning and flood mitigation measures</strong>.
+            </>
+        );
+    }
+    if (riskLevel === "High") {
+        return (
+            <>
+                The characteristics of this area suggest an elevated flood risk.{" "}
+                <strong>Consider this when planning construction</strong> or
+                infrastructure improvements.
+            </>
+        );
+    }
+    if (riskLevel === "Moderate") {
+        return (
+            <>
+                While not the highest risk, this area may still experience
+                flooding during extreme weather events.{" "}
+                <strong>Standard precautionary measures are recommended</strong>.
+            </>
+        );
+    }
+    return (
+        <>
+            Based on the surrounding terrain and environmental factors, this area
+            is <strong>relatively safe from flooding</strong> under normal
+            conditions. Always remain aware of extreme weather warnings.
+        </>
+    );
+}
+
+export function Interpretation({ riskLevel }: InterpretationProps) {
     return (
         <Card>
             <CardHeader>
@@ -51,29 +83,28 @@ export function Interpretation({ riskLevel, probability }: InterpretationProps) 
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p className="font-medium text-base">
+                <div>
                     <span
-                        className="inline-block px-2 py-0.5 rounded-full text-white text-sm font-semibold mr-1"
+                        className="inline-block px-3 py-1 rounded-full text-white text-base font-semibold"
                         style={{
-                            backgroundColor:
-                                probability < 0.25
-                                    ? "#10b981"
-                                    : probability < 0.5
-                                      ? "#f59e0b"
-                                      : probability < 0.75
-                                        ? "#f97316"
-                                        : "#ef4444",
+                            backgroundColor: pillColorForRisk(riskLevel),
                         }}
                     >
                         {riskLevel}
-                    </span>{" "}
-                    {summary}
+                    </span>
+                </div>
+
+                <p className="font-medium text-base text-foreground">
+                    This location has a{" "}
+                    <strong>{susceptibilityPhrase(riskLevel)}</strong>.
                 </p>
-                <p>{detail}</p>
+
+                <p>{renderDetail(riskLevel)}</p>
+
                 <p className="text-xs text-muted-foreground pt-2 border-t border-border">
-                    This interpretation is based on the ensemble model's
-                    assessment of terrain and environmental conditioning
-                    factors.
+                    This interpretation is based on the{" "}
+                    <strong>ensemble model's assessment</strong> of terrain and
+                    environmental conditioning factors.
                 </p>
             </CardContent>
         </Card>

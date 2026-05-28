@@ -64,7 +64,7 @@ export function ModelComparison({
                     </div>
 
                     {/* Ensemble */}
-                    <div className="rounded-lg border-2 border-primary bg-accent/30 p-4 space-y-3 relative overflow-hidden">
+                    <div className="rounded-lg border-2 border-primary bg-accent/30 p-4 space-y-3 relative overflow-hidden shadow-md">
                         <div className="absolute top-2 right-2">
                             <Zap className="h-8 w-8 text-primary/20" />
                         </div>
@@ -127,7 +127,7 @@ function ModelStats({
             </div>
             <div className="flex justify-between items-center">
                 <span className={`text-sm ${mutedCls}`}>Probability</span>
-                <span className={`font-semibold ${textCls}`}>
+                <span className={`text-2xl font-bold ${textCls}`}>
                     {(prediction.probability * 100).toFixed(1)}%
                 </span>
             </div>
