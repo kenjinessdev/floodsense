@@ -4,7 +4,8 @@ import { MapComponent } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Info, AlertCircle } from "lucide-react";
+import { ChevronDown, ChevronRight, Info, AlertCircle } from "lucide-react";
+import { loadLandmarks, type Landmark, type DistrictLandmarks } from "@/lib/landmarks";
 
 interface DistrictCentroid {
     name: string;
@@ -56,6 +57,14 @@ function HomeComponent() {
     const [goToRegionTarget, setGoToRegionTarget] =
         useState<GoToRegionTarget | null>(null);
     const [districtQuery, setDistrictQuery] = useState("");
+    const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
+    const [landmarksData, setLandmarksData] = useState<DistrictLandmarks[]>([]);
+
+    useEffect(() => {
+        void loadLandmarks()
+            .then(setLandmarksData)
+            .catch((err) => console.error("Failed to load landmarks:", err));
+    }, []);
 
     useEffect(() => {
         const loadQuickNavDistricts = async () => {
@@ -152,6 +161,22 @@ function HomeComponent() {
         });
     };
 
+    const handleLandmarkClick = (landmark: Landmark) => {
+        setSelectedLocation({ lat: landmark.lat, lng: landmark.lng });
+        setGoToRegionTarget({
+            center: [landmark.lat, landmark.lng],
+            zoom: 16,
+            requestId: Date.now(),
+        });
+        navigate({
+            to: "/result",
+            search: {
+                lat: landmark.lat,
+                lng: landmark.lng,
+            },
+        });
+    };
+
     const filteredQuickNavDistricts = useMemo(() => {
         const query = districtQuery.trim().toLowerCase();
         if (!query) return quickNavDistricts;
@@ -162,16 +187,16 @@ function HomeComponent() {
     }, [quickNavDistricts, districtQuery]);
 
     return (
-        <div className="h-svh flex flex-col bg-slate-50 dark:bg-slate-950">
+        <div className="h-svh flex flex-col bg-background">
             {/* Header - compact on mobile */}
-            <header className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shrink-0">
+            <header className="border-b bg-background/80 backdrop-blur-xl shrink-0">
                 <div className="px-4 py-2.5 md:py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-lg md:text-3xl font-bold bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                                🌊 Davao FloodSense
+                            <h1 className="text-lg md:text-3xl font-bold text-foreground">
+                                Davao FloodSense
                             </h1>
-                            <p className="hidden md:block text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+                            <p className="hidden md:block text-sm text-muted-foreground mt-0.5">
                                 Ensemble Risk Mapper for Davao City
                             </p>
                         </div>
@@ -200,13 +225,13 @@ function HomeComponent() {
                     {/* Mobile bottom overlay panel */}
                     <div className="md:hidden absolute bottom-0 left-0 right-0 z-1001 p-3 pointer-events-none">
                         {selectedLocation ? (
-                            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 p-4 pointer-events-auto">
+                            <div className="bg-background/95 backdrop-blur-md rounded-xl shadow-xl border border-border p-4 pointer-events-auto">
                                 <div className="flex items-center justify-between mb-3">
                                     <div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">
+                                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
                                             Selected Location
                                         </p>
-                                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mt-0.5">
+                                        <p className="text-sm font-semibold text-foreground mt-0.5">
                                             {selectedLocation.lat.toFixed(5)},{" "}
                                             {selectedLocation.lng.toFixed(5)}
                                         </p>
@@ -214,16 +239,16 @@ function HomeComponent() {
                                 </div>
                                 <Button
                                     onClick={handleAnalyze}
-                                    className="w-full bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30"
+                                    className="w-full"
                                     size="lg"
                                 >
                                     Analyze Location
                                 </Button>
                             </div>
                         ) : (
-                            <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-xl shadow-lg border border-slate-100 dark:border-slate-800 px-4 py-3 pointer-events-auto text-center">
-                                <p className="text-xs text-slate-600 dark:text-slate-400">
-                                    <strong className="text-slate-800 dark:text-slate-200">
+                            <div className="bg-background/90 backdrop-blur-md rounded-xl shadow-lg border border-border px-4 py-3 pointer-events-auto text-center">
+                                <p className="text-xs text-muted-foreground">
+                                    <strong className="text-foreground">
                                         Tap the map
                                     </strong>{" "}
                                     within the blue boundary to analyze flood
@@ -235,14 +260,14 @@ function HomeComponent() {
                 </div>
 
                 {/* Sidebar — desktop only */}
-                <div className="hidden md:flex md:w-96 bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 overflow-y-auto flex-col">
+                <div className="hidden md:flex md:w-96 bg-card border-l border-border overflow-y-auto flex-col">
                     <div className="p-6 space-y-6">
                         {/* Title */}
                         <div>
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                            <h2 className="text-xl font-bold text-foreground mb-2">
                                 Flood Risk Analysis
                             </h2>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                            <p className="text-sm text-muted-foreground">
                                 Select a location on the map to analyze flood
                                 susceptibility
                             </p>
@@ -250,9 +275,9 @@ function HomeComponent() {
 
                         {/* Location Info */}
                         {selectedLocation ? (
-                            <Card className="border-blue-200 dark:border-blue-900/50 bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 shadow-lg shadow-blue-500/10">
+                            <Card className="border-primary/30 bg-accent/20 shadow-lg">
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                    <CardTitle className="text-sm font-medium text-accent-foreground">
                                         Selected Location
                                     </CardTitle>
                                 </CardHeader>
@@ -272,7 +297,7 @@ function HomeComponent() {
                                     <Button
                                         onClick={handleAnalyze}
                                         disabled={!selectedLocation}
-                                        className="w-full mt-3 bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full mt-3"
                                         size="lg"
                                     >
                                         Analyze Location
@@ -280,9 +305,9 @@ function HomeComponent() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            <Card className="border-slate-200 dark:border-slate-800 bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50">
+                            <Card className="border-border bg-card">
                                 <CardContent>
-                                    <div className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
+                                    <div className="flex items-start gap-3 text-muted-foreground">
                                         <Info className="h-5 w-5 mt-0.5 shrink-0" />
                                         <div className="text-sm">
                                             <p className="font-medium mb-1">
@@ -309,20 +334,20 @@ function HomeComponent() {
                             </Card>
                         )}
 
-                        <Card className="border-slate-200 dark:border-slate-800">
+                        <Card className="border-border">
                             <CardHeader className="pb-3">
-                                <CardTitle className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                <CardTitle className="text-sm font-medium text-foreground">
                                     Go to District
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {isQuickNavLoading &&
                                 quickNavDistricts.length === 0 ? (
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    <p className="text-xs text-muted-foreground">
                                         Loading districts...
                                     </p>
                                 ) : quickNavDistricts.length === 0 ? (
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    <p className="text-xs text-muted-foreground">
                                         No districts available.
                                     </p>
                                 ) : (
@@ -340,27 +365,82 @@ function HomeComponent() {
 
                                         {filteredQuickNavDistricts.length ===
                                         0 ? (
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                            <p className="text-xs text-muted-foreground">
                                                 No matching districts.
                                             </p>
                                         ) : (
-                                            <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                                            <div className="space-y-1 max-h-80 overflow-y-auto pr-1">
                                                 {filteredQuickNavDistricts.map(
-                                                    (region) => (
-                                                        <Button
-                                                            key={region.name}
-                                                            onClick={() =>
-                                                                handleGoToDistrict(
-                                                                    region,
-                                                                )
-                                                            }
-                                                            variant="outline"
-                                                            size="xs"
-                                                            className="justify-start"
-                                                        >
-                                                            {region.name}
-                                                        </Button>
-                                                    ),
+                                                    (region) => {
+                                                        const landmarks =
+                                                            landmarksData.find(
+                                                                (dl) =>
+                                                                    region.name.startsWith(
+                                                                        dl.district,
+                                                                    ),
+                                                            )?.landmarks ?? [];
+                                                        const isExpanded =
+                                                            expandedDistrict ===
+                                                            region.name;
+                                                        return (
+                                                            <div
+                                                                key={
+                                                                    region.name
+                                                                }
+                                                            >
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setExpandedDistrict(
+                                                                            isExpanded
+                                                                                ? null
+                                                                                : region.name,
+                                                                        );
+                                                                    }}
+                                                                    className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                                                                >
+                                                                    <span className="font-medium">
+                                                                        {
+                                                                            region.name
+                                                                        }
+                                                                    </span>
+                                                                    {isExpanded ? (
+                                                                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                                                    ) : (
+                                                                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                                                    )}
+                                                                </button>
+                                                                {isExpanded &&
+                                                                    landmarks.length >
+                                                                        0 && (
+                                                                        <div className="ml-3 mt-1 space-y-0.5 border-l-2 border-border pl-2">
+                                                                            {landmarks.map(
+                                                                                (
+                                                                                    landmark,
+                                                                                ) => (
+                                                                                    <button
+                                                                                        key={
+                                                                                            landmark.name
+                                                                                        }
+                                                                                        onClick={() =>
+                                                                                            handleLandmarkClick(
+                                                                                                landmark,
+                                                                                            )
+                                                                                        }
+                                                                                        className="flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors text-left"
+                                                                                    >
+                                                                                        <span className="flex-1 truncate">
+                                                                                            {
+                                                                                                landmark.name
+                                                                                            }
+                                                                                        </span>
+                                                                                    </button>
+                                                                                ),
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                            </div>
+                                                        );
+                                                    },
                                                 )}
                                             </div>
                                         )}
@@ -370,7 +450,7 @@ function HomeComponent() {
                         </Card>
 
                         {/* Disclaimer */}
-                        <Card className="border-amber-200 dark:border-amber-900/50 bg-linear-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+                        <Card className="border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20">
                             <CardContent>
                                 <div className="flex items-start gap-3">
                                     <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-500 shrink-0" />

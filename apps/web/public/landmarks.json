@@ -1,0 +1,193 @@
+{
+    "meta": {
+        "description": "Curated landmark points per Davao City district for flood risk cross-validation demo.",
+        "note": "Coordinates are approximate. Verify in Google Maps before final use."
+    },
+    "districts": [
+        {
+            "district": "Agdao",
+            "landmarks": [
+                {
+                    "name": "Agdao Public Market",
+                    "lat": 7.0849,
+                    "lng": 125.6238
+                },
+                {
+                    "name": "Lon Wa Buddhist Temple",
+                    "lat": 7.0938,
+                    "lng": 125.6271
+                },
+                {
+                    "name": "Leon Garcia St",
+                    "lat": 7.0825,
+                    "lng": 125.6275
+                }
+            ]
+        },
+        {
+            "district": "Baguio",
+            "landmarks": [
+                {
+                    "name": "Malagos Garden Resort",
+                    "lat": 7.19,
+                    "lng": 125.4286
+                },
+                {
+                    "name": "Philippine Eagle Park",
+                    "lat": 7.188453021746139,
+                    "lng": 125.42125603112012
+                }
+            ]
+        },
+        {
+            "district": "Buhangin",
+            "landmarks": [
+                {
+                    "name": "Buhangin Proper",
+                    "lat": 7.1094,
+                    "lng": 125.6154
+                },
+                {
+                    "name": "Davao International Airport",
+                    "lat": 7.1344,
+                    "lng": 125.6457
+                }
+            ]
+        },
+        {
+            "district": "Bunawan",
+            "landmarks": [
+                {
+                    "name": "Bunawan Proper",
+                    "lat": 7.2375,
+                    "lng": 125.6426
+                },
+                {
+                    "name": "Bunawan Aplaya Elementary School",
+                    "lat": 7.240572339697761,
+                    "lng": 125.649482220592
+                }
+            ]
+        },
+        {
+            "district": "Calinan",
+            "landmarks": [
+                {
+                    "name": "Calinan Proper",
+                    "lat": 7.1876,
+                    "lng": 125.4532
+                },
+                {
+                    "name": "Philippine College of Technology Calinan",
+                    "lat": 7.182423464070611,
+                    "lng": 125.45035897047258
+                },
+                {
+                    "name": "Holy Spirit Academy of Calinan",
+                    "lat": 7.18485433102388,
+                    "lng": 125.47840433004177
+                }
+            ]
+        },
+        {
+            "district": "Marilog",
+            "landmarks": [
+                {
+                    "name": "Marilog Proper",
+                    "lat": 7.2816,
+                    "lng": 125.3073
+                }
+            ]
+        },
+        {
+            "district": "Paquibato",
+            "landmarks": [
+                {
+                    "name": "Paquibato Proper",
+                    "lat": 7.3709,
+                    "lng": 125.4961
+                }
+            ]
+        },
+        {
+            "district": "Poblacion",
+            "landmarks": [
+                {
+                    "name": "Davao City Hall",
+                    "lat": 7.0647,
+                    "lng": 125.6079
+                },
+                {
+                    "name": "San Pedro Cathedral / Rizal Park",
+                    "lat": 7.0651,
+                    "lng": 125.6091
+                },
+                {
+                    "name": "People's Park",
+                    "lat": 7.0705,
+                    "lng": 125.6084
+                },
+                {
+                    "name": "Davao Chinatown (China Street)",
+                    "lat": 7.0743,
+                    "lng": 125.6239
+                },
+                {
+                    "name": "Bankerohan Market",
+                    "lat": 7.0689,
+                    "lng": 125.6008
+                }
+            ]
+        },
+        {
+            "district": "Talomo",
+            "landmarks": [
+                {
+                    "name": "University of Mindanao - Matina Campus",
+                    "lat": 7.0657,
+                    "lng": 125.5965
+                },
+                {
+                    "name": "NCCC Centerpoint",
+                    "lat": 7.0594,
+                    "lng": 125.5693
+                }
+            ]
+        },
+        {
+            "district": "Toril",
+            "landmarks": [
+                {
+                    "name": "Toril Proper",
+                    "lat": 7.0185,
+                    "lng": 125.5005
+                },
+                {
+                    "name": "Toril Memorial Park",
+                    "lat": 7.0416,
+                    "lng": 125.4949
+                }
+            ]
+        },
+        {
+            "district": "Tugbok",
+            "landmarks": [
+                {
+                    "name": "Tugbok Proper",
+                    "lat": 7.1099,
+                    "lng": 125.4845
+                },
+                {
+                    "name": "PSHS-DRC (Santo Niño)",
+                    "lat": 7.0855,
+                    "lng": 125.5084
+                },
+                {
+                    "name": "Deca Homes Mintal",
+                    "lat": 7.1108,
+                    "lng": 125.4932
+                }
+            ]
+        }
+    ]
+}
