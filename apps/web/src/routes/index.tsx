@@ -168,13 +168,6 @@ function HomeComponent() {
             zoom: 16,
             requestId: Date.now(),
         });
-        navigate({
-            to: "/result",
-            search: {
-                lat: landmark.lat,
-                lng: landmark.lng,
-            },
-        });
     };
 
     const filteredQuickNavDistricts = useMemo(() => {
