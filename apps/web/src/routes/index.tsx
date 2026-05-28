@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, ChevronRight, Info, AlertCircle } from "lucide-react";
-import { DISTRICT_LANDMARKS, type Landmark } from "@/lib/landmarks";
+import { loadLandmarks, type Landmark, type DistrictLandmarks } from "@/lib/landmarks";
 
 interface DistrictCentroid {
     name: string;
@@ -58,6 +58,13 @@ function HomeComponent() {
         useState<GoToRegionTarget | null>(null);
     const [districtQuery, setDistrictQuery] = useState("");
     const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
+    const [landmarksData, setLandmarksData] = useState<DistrictLandmarks[]>([]);
+
+    useEffect(() => {
+        void loadLandmarks()
+            .then(setLandmarksData)
+            .catch((err) => console.error("Failed to load landmarks:", err));
+    }, []);
 
     useEffect(() => {
         const loadQuickNavDistricts = async () => {
@@ -366,10 +373,11 @@ function HomeComponent() {
                                                 {filteredQuickNavDistricts.map(
                                                     (region) => {
                                                         const landmarks =
-                                                            DISTRICT_LANDMARKS.find(
+                                                            landmarksData.find(
                                                                 (dl) =>
-                                                                    dl.district ===
-                                                                    region.name,
+                                                                    region.name.startsWith(
+                                                                        dl.district,
+                                                                    ),
                                                             )?.landmarks ?? [];
                                                         const isExpanded =
                                                             expandedDistrict ===
