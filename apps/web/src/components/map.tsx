@@ -44,6 +44,7 @@ export function MapComponent({
     const markerRef = useRef<L.Marker | null>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const boundaryRef = useRef<Array<[number, number]> | null>(null);
+    const lastGeocodedKeyRef = useRef<string>("");
     const [selectedAddress, setSelectedAddress] = useState<string>(
         "Reverse geocoding is unavailable as of the moment.",
     );
@@ -147,6 +148,7 @@ export function MapComponent({
             }
 
             onLocationSelect(lat, lng);
+            lastGeocodedKeyRef.current = `${lat},${lng}`;
             setSelectedAddress("Resolving location...");
 
             void reverseGeocode(lat, lng)
@@ -173,6 +175,26 @@ export function MapComponent({
         if (!mapRef.current || !goToRegionTarget) return;
         mapRef.current.setView(goToRegionTarget.center, goToRegionTarget.zoom);
     }, [goToRegionTarget]);
+
+    // Reverse-geocode when location is set externally (e.g. landmarks sidebar)
+    useEffect(() => {
+        if (!selectedLocation) return;
+        const key = `${selectedLocation.lat},${selectedLocation.lng}`;
+        if (lastGeocodedKeyRef.current === key) return;
+        lastGeocodedKeyRef.current = key;
+
+        setSelectedAddress("Resolving location...");
+        void reverseGeocode(selectedLocation.lat, selectedLocation.lng)
+            .then((address) => {
+                setSelectedAddress(address);
+            })
+            .catch((error: unknown) => {
+                console.error("Reverse geocoding error:", error);
+                setSelectedAddress(
+                    "Reverse geocoding is unavailable as of the moment.",
+                );
+            });
+    }, [selectedLocation]);
 
     // Update marker when location changes
     useEffect(() => {
@@ -233,6 +255,7 @@ export function MapComponent({
                     }
 
                     onLocationSelect(latitude, longitude);
+                    lastGeocodedKeyRef.current = `${latitude},${longitude}`;
                     setSelectedAddress("Resolving location...");
 
                     void reverseGeocode(latitude, longitude)
