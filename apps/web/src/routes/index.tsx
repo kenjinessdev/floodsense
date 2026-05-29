@@ -258,7 +258,7 @@ function HomeComponent() {
                         {/* Title */}
                         <div>
                             <h2 className="text-xl font-bold text-foreground mb-2">
-                                Flood Risk Analysis
+                                Flood Susceptibility Analysis
                             </h2>
                             <p className="text-sm text-muted-foreground">
                                 Select a location on the map to analyze flood
