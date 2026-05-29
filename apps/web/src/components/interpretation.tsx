@@ -49,7 +49,7 @@ function renderDetail(riskLevel: string) {
     if (riskLevel === "High") {
         return (
             <>
-                The characteristics of this area suggest an elevated flood risk.{" "}
+                The characteristics of this area             suggest elevated flood susceptibility.{" "}
                 <strong>Consider this when planning construction</strong> or
                 infrastructure improvements.
             </>
@@ -58,7 +58,7 @@ function renderDetail(riskLevel: string) {
     if (riskLevel === "Moderate") {
         return (
             <>
-                While not the highest risk, this area may still experience
+                While not the highest susceptibility, this area may still experience
                 flooding during extreme weather events.{" "}
                 <strong>Standard precautionary measures are recommended</strong>.
             </>

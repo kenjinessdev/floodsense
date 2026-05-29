@@ -19,7 +19,7 @@ export function RegionalContext() {
                             <strong>
                                 not a real-time weather forecast
                             </strong>
-                            , but a risk assessment based on terrain and
+                            , but a flood susceptibility analysis based on terrain and
                             climatological factors.
                         </p>
                     </div>

@@ -56,7 +56,7 @@ function ResultComponent() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                                Flood Risk Assessment
+                                Flood Susceptibility
                             </h1>
                             <p className="text-sm md:text-base text-muted-foreground mt-1">
                                 Location: {lat.toFixed(6)}, {lng.toFixed(6)}
@@ -100,7 +100,7 @@ function ResultComponent() {
                 )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Left Column - Risk Gauge */}
+                    {/* Left Column - Susceptibility Gauge */}
                     <div className="lg:col-span-1">
                         <Card className="sticky top-4 shadow-xl">
                             <CardHeader>
@@ -236,7 +236,7 @@ function Recommendations({ riskLevel }: { riskLevel: string }) {
                     ) : isModerate ? (
                         <>
                             <RecommendationItem icon={<Zap className="h-4 w-4 text-yellow-600 shrink-0 mt-0.5" />}>
-                                Moderate risk detected. Consider preventive
+                                Moderate flood susceptibility detected. Consider preventive
                                 measures such as improved drainage systems.
                             </RecommendationItem>
                             <RecommendationItem icon={<CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />}>
@@ -247,7 +247,7 @@ function Recommendations({ riskLevel }: { riskLevel: string }) {
                     ) : (
                         <>
                             <RecommendationItem icon={<CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />}>
-                                Low flood risk detected. This location appears
+                                Low flood susceptibility detected. This location appears
                                 relatively safe based on terrain and
                                 environmental factors.
                             </RecommendationItem>

@@ -117,7 +117,7 @@ function ModelStats({
     return (
         <div className="space-y-2">
             <div className="flex justify-between items-center">
-                <span className={`text-sm ${mutedCls}`}>Risk Level</span>
+                <span className={`text-sm ${mutedCls}`}>Susceptibility Level</span>
                 <span
                     className="font-semibold text-sm px-2 py-0.5 rounded-full text-white"
                     style={{ backgroundColor: prediction.risk_color }}
