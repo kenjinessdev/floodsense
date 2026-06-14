@@ -5,12 +5,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, Zap, AlertTriangle } from "lucide-react";
+import { riskColorFromProbability } from "@/lib/risk-color";
 
 interface ModelPrediction {
     prediction: number;
     probability: number;
     risk_level: string;
-    risk_color: string;
     label: string;
     override: boolean;
     override_reason: string | null;
@@ -34,7 +34,7 @@ export function ModelComparison({
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-xl flex items-center gap-2">
-                        <Target className="h-5 w-5 text-primary" />
+                        <Target aria-hidden="true" className="h-5 w-5 text-primary" />
                         Model Performance Comparison
                     </CardTitle>
                     <Badge variant="secondary">
@@ -66,7 +66,7 @@ export function ModelComparison({
                     {/* Ensemble */}
                     <div className="rounded-lg border-2 border-primary bg-accent/30 p-4 space-y-3 relative overflow-hidden shadow-md">
                         <div className="absolute top-2 right-2">
-                            <Zap className="h-8 w-8 text-primary/20" />
+                            <Zap aria-hidden="true" className="h-8 w-8 text-primary/20" />
                         </div>
                         <div className="flex items-center justify-between">
                             <h3 className="font-semibold text-accent-foreground">
@@ -119,8 +119,7 @@ function ModelStats({
             <div className="flex justify-between items-center">
                 <span className={`text-sm ${mutedCls}`}>Susceptibility Level</span>
                 <span
-                    className="font-semibold text-sm px-2 py-0.5 rounded-full text-white"
-                    style={{ backgroundColor: prediction.risk_color }}
+                    className={`font-semibold text-sm px-2 py-0.5 rounded-full text-white ${riskColorFromProbability(prediction.probability)}`}
                 >
                     {prediction.risk_level}
                 </span>

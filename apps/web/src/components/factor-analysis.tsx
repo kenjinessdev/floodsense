@@ -4,9 +4,9 @@ import { Info } from "lucide-react";
 export function RegionalContext() {
     return (
         <Card className="bg-accent/30 border-primary/20">
-            <CardContent className="pt-6">
+            <CardContent>
                 <div className="flex gap-3">
-                    <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <Info aria-hidden="true" className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                     <div className="flex-1">
                         <h4 className="font-semibold mb-1 text-accent-foreground">
                             Regional Context

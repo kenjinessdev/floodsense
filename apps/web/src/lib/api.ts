@@ -4,7 +4,6 @@ export interface ModelPrediction {
     prediction: number;
     probability: number;
     risk_level: string;
-    risk_color: string;
     label: string;
     override: boolean;
     override_reason: string | null;
