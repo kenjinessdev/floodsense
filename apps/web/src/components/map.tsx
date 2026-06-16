@@ -32,6 +32,7 @@ interface MapComponentProps {
         zoom: number;
         requestId: number;
     } | null;
+    onMapReady?: (map: L.Map) => void;
 }
 
 export function MapComponent({
@@ -39,12 +40,17 @@ export function MapComponent({
     selectedLocation,
     isAnalyzing,
     goToRegionTarget,
+    onMapReady,
 }: MapComponentProps) {
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const boundaryRef = useRef<Array<[number, number]> | null>(null);
     const lastGeocodedKeyRef = useRef<string>("");
+    const onLocationSelectRef = useRef(onLocationSelect);
+    const onMapReadyRef = useRef(onMapReady);
+    onLocationSelectRef.current = onLocationSelect;
+    onMapReadyRef.current = onMapReady;
     const [selectedAddress, setSelectedAddress] = useState<string>(
         "Reverse geocoding is unavailable as of the moment.",
     );
@@ -147,7 +153,7 @@ export function MapComponent({
                 return;
             }
 
-            onLocationSelect(lat, lng);
+            onLocationSelectRef.current(lat, lng);
             lastGeocodedKeyRef.current = `${lat},${lng}`;
             setSelectedAddress("Resolving location...");
 
@@ -164,6 +170,9 @@ export function MapComponent({
         });
 
         mapRef.current = map;
+        onLocationSelectRef.current = onLocationSelect;
+
+        onMapReadyRef.current?.(map);
 
         return () => {
             map.remove();

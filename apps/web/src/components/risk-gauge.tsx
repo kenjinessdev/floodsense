@@ -24,9 +24,9 @@ export function RiskGauge({
     const percentage = Math.round(probability * 100);
 
     const getTextColorClass = () => {
-        if (probability < 0.25) return "text-emerald-600 dark:text-emerald-400";
+        if (probability < 0.3) return "text-emerald-600 dark:text-emerald-400";
         if (probability < 0.5) return "text-amber-600 dark:text-amber-400";
-        if (probability < 0.75) return "text-orange-600 dark:text-orange-400";
+        if (probability < 0.8) return "text-orange-600 dark:text-orange-400";
         return "text-red-600 dark:text-red-400";
     };
 
@@ -65,19 +65,19 @@ export function RiskGauge({
             <div className="grid grid-cols-2 gap-2 text-xs mt-2 w-full">
                 <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 rounded-full px-3 py-1.5">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                    <span className="font-medium">Low (0–25%)</span>
+                    <span className="font-medium">Very Low (0–30%)</span>
                 </div>
                 <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 rounded-full px-3 py-1.5">
                     <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                    <span className="font-medium">Moderate (25–50%)</span>
+                    <span className="font-medium">Low (30–50%)</span>
                 </div>
                 <div className="flex items-center gap-2 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 rounded-full px-3 py-1.5">
                     <div className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
-                    <span className="font-medium">High (50–75%)</span>
+                    <span className="font-medium">Moderate (50–80%)</span>
                 </div>
                 <div className="flex items-center gap-2 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded-full px-3 py-1.5">
                     <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
-                    <span className="font-medium">Very High (75–100%)</span>
+                    <span className="font-medium">High (80–100%)</span>
                 </div>
             </div>
         </div>

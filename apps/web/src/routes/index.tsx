@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import type L from "leaflet";
 import { MapComponent } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, ChevronRight, Info, AlertCircle } from "lucide-react";
 import { loadLandmarks, type Landmark, type DistrictLandmarks } from "@/lib/landmarks";
+import { FloodSusceptibilityOverlay } from "@/components/flood-susceptibility-overlay";
 
 interface DistrictCentroid {
     name: string;
@@ -56,6 +58,8 @@ function HomeComponent() {
     const [isQuickNavLoading, setIsQuickNavLoading] = useState(true);
     const [goToRegionTarget, setGoToRegionTarget] =
         useState<GoToRegionTarget | null>(null);
+    const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
+    const mapReadyRef = useRef(false);
     const [districtQuery, setDistrictQuery] = useState("");
     const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
     const [landmarksData, setLandmarksData] = useState<DistrictLandmarks[]>([]);
@@ -213,6 +217,16 @@ function HomeComponent() {
                         selectedLocation={selectedLocation}
                         isAnalyzing={false}
                         goToRegionTarget={goToRegionTarget}
+                        onMapReady={(map) => {
+                            if (!mapReadyRef.current) {
+                                setMapInstance(map);
+                                mapReadyRef.current = true;
+                            }
+                        }}
+                    />
+                    <FloodSusceptibilityOverlay
+                        map={mapInstance}
+                        url="/ensemble_map_davao_City.json"
                     />
 
                     {/* Mobile bottom overlay panel */}
