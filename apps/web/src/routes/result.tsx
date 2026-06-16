@@ -107,7 +107,8 @@ function ResultComponent() {
                         <>
                             <ModelComparison
                                 baselineRf={data.baseline_rf}
-                                xgboost={data.xgboost}
+                                rfInsideEnsemble={data.rf_inside_ensemble}
+                                xgbInsideEnsemble={data.xgb_inside_ensemble}
                                 ensemble={data.ensemble}
                             />
 

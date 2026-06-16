@@ -22,7 +22,8 @@ export interface ExtractedValues {
 
 export interface FloodPredictionResponse {
     baseline_rf: ModelPrediction;
-    xgboost?: ModelPrediction;
+    rf_inside_ensemble?: ModelPrediction;
+    xgb_inside_ensemble?: ModelPrediction;
     ensemble: ModelPrediction;
     extracted_values: ExtractedValues;
 }
