@@ -126,3 +126,69 @@
         @apply font-sans;
     }
 }
+
+/* ── Flood Susceptibility Styles ── */
+
+@keyframes flood-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.flood-banner__spinner {
+    animation: flood-spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flood-banner__spinner {
+        animation: none;
+    }
+}
+
+/* Leaflet legend override */
+.flood-legend {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.flood-legend__inner {
+    line-height: 1.4;
+}
+
+/* Leaflet tooltip override */
+.flood-tooltip {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(4px);
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    color: #f1f5f9 !important;
+    font-size: 13px !important;
+}
+
+.flood-tooltip::before {
+    border-top-color: rgba(15, 23, 42, 0.9) !important;
+}
+
+/* Leaflet popup override */
+.flood-popup .leaflet-popup-content-wrapper {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.flood-popup .leaflet-popup-tip {
+    background: #1e293b !important;
+}
+
+.flood-popup .leaflet-popup-content {
+    margin: 0 !important;
+    min-width: 200px;
+}
+
+
