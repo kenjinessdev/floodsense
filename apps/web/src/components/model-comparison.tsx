@@ -18,11 +18,13 @@ interface ModelPrediction {
 
 interface ModelComparisonProps {
     baselineRf: ModelPrediction;
+    xgboost?: ModelPrediction;
     ensemble: ModelPrediction;
 }
 
 export function ModelComparison({
     baselineRf,
+    xgboost,
     ensemble,
 }: ModelComparisonProps) {
     const probDiff =
@@ -44,7 +46,7 @@ export function ModelComparison({
             </CardHeader>
             <CardContent className="space-y-6">
                 {/* Model Cards */}
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className={`grid gap-4 ${xgboost ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                     {/* Baseline RF */}
                     <div className="rounded-lg border-2 border-border bg-card p-4 space-y-3">
                         <div className="flex items-center justify-between">
@@ -62,6 +64,24 @@ export function ModelComparison({
                             </p>
                         </div>
                     </div>
+
+                    {/* XGBoost */}
+                    {xgboost && <div className="rounded-lg border-2 border-border bg-card p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-semibold text-foreground">
+                                XGBoost Model
+                            </h3>
+                            <Badge variant="secondary" className="text-xs">
+                                XGBoost
+                            </Badge>
+                        </div>
+                        <ModelStats prediction={xgboost} />
+                        <div className="pt-2 border-t border-border">
+                            <p className="text-xs text-muted-foreground">
+                                AUC: 0.86 · Gradient Boosting
+                            </p>
+                        </div>
+                    </div>}
 
                     {/* Ensemble */}
                     <div className="rounded-lg border-2 border-primary bg-accent/30 p-4 space-y-3 relative overflow-hidden shadow-md">
