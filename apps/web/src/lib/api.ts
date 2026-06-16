@@ -4,7 +4,6 @@ export interface ModelPrediction {
     prediction: number;
     probability: number;
     risk_level: string;
-    risk_color: string;
     label: string;
     override: boolean;
     override_reason: string | null;
@@ -23,6 +22,8 @@ export interface ExtractedValues {
 
 export interface FloodPredictionResponse {
     baseline_rf: ModelPrediction;
+    rf_inside_ensemble?: ModelPrediction;
+    xgb_inside_ensemble?: ModelPrediction;
     ensemble: ModelPrediction;
     extracted_values: ExtractedValues;
 }

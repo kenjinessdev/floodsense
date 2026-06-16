@@ -4,12 +4,12 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RiskGauge } from "@/components/risk-gauge";
 import { RegionalContext } from "@/components/factor-analysis";
 import { Interpretation } from "@/components/interpretation";
 import { ModelComparison } from "@/components/model-comparison";
+import { ExtractedFactors } from "@/components/extracted-factors";
 import { predictFloodRisk } from "@/lib/api";
-import { ArrowLeft, Download, AlertCircle, AlertTriangle, HardHat, Bell, Zap, CheckCircle2, Info } from "lucide-react";
+import { ArrowLeft, AlertCircle, AlertTriangle, HardHat, Bell, Zap, CheckCircle2, Info } from "lucide-react";
 
 const coordinateSchema = z
     .union([z.number(), z.string()])
@@ -43,11 +43,6 @@ function ResultComponent() {
 
     const handleBack = () => navigate({ to: "/" });
 
-    const handleDownload = () => {
-        // Placeholder for future implementation
-        alert("Download feature will be available once backend is integrated.");
-    };
-
     return (
         <div className="min-h-screen bg-background">
             {/* Header */}
@@ -65,20 +60,21 @@ function ResultComponent() {
                         <Button
                             onClick={handleBack}
                             variant="outline"
+                            size="lg"
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            <ArrowLeft aria-hidden="true" className="mr-2 h-4 w-4" />
                             Back to Map
                         </Button>
-                    </div>
-                </div>
-            </header>
+            </div>
+        </div>
+    </header>
 
             {/* Main Content */}
-            <div className="container mx-auto px-4 py-8 max-w-6xl">
+            <main className="container mx-auto px-4 py-8 max-w-6xl" aria-label="Flood susceptibility results">
                 {isError && (
-                    <Card className="mb-6 border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20">
+                    <Card role="alert" className="mb-6 border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20">
                         <CardContent className="pt-6 flex items-start gap-3">
-                            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                            <AlertCircle aria-hidden="true" className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                             <div>
                                 <p className="font-semibold text-red-800 dark:text-red-300">
                                     Unable to analyze this location.
@@ -99,112 +95,65 @@ function ResultComponent() {
                     </Card>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Left Column - Susceptibility Gauge */}
-                    <div className="lg:col-span-1">
-                        <Card className="sticky top-4 shadow-xl">
-                            <CardHeader>
-                                <CardTitle className="text-foreground">
-                                    Flood Susceptibility
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                {isPending ? (
-                                    <div className="space-y-4">
-                                        <Skeleton className="h-32 w-full rounded-lg" />
-                                        <Skeleton className="h-8 w-3/4 mx-auto rounded-full" />
-                                        <Skeleton className="h-4 w-full rounded" />
-                                    </div>
-                                ) : isSuccess && data ? (
-                                    <>
-                                        <RiskGauge
-                                            probability={
-                                                data.ensemble.probability
-                                            }
-                                            riskLevel={data.ensemble.risk_level}
-                                            riskColor={data.ensemble.risk_color}
-                                            label={data.ensemble.label}
-                                            override={data.ensemble.override}
-                                            overrideReason={
-                                                data.ensemble.override_reason
-                                            }
-                                        />
-                                        <div className="mt-6 space-y-2">
-                                            <Button
-                                                onClick={handleDownload}
-                                                variant="outline"
-                                                    className="w-full"
-                                            >
-                                                <Download className="mr-2 h-4 w-4" />
-                                                Download Report
-                                            </Button>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        Prediction data is unavailable.
-                                    </p>
-                                )}
+                <div className="space-y-6" aria-busy={isPending}>
+                    {isPending ? (
+                        <>
+                            <Skeleton className="h-64 w-full rounded-xl" />
+                            <Skeleton className="h-48 w-full rounded-xl" />
+                            <Skeleton className="h-80 w-full rounded-xl" />
+                            <span className="sr-only">Loading flood prediction results</span>
+                        </>
+                    ) : isSuccess && data ? (
+                        <>
+                            <ModelComparison
+                                baselineRf={data.baseline_rf}
+                                rfInsideEnsemble={data.rf_inside_ensemble}
+                                xgbInsideEnsemble={data.xgb_inside_ensemble}
+                                ensemble={data.ensemble}
+                            />
+
+                            <ExtractedFactors values={data.extracted_values} />
+
+                            <Interpretation
+                                riskLevel={data.ensemble.risk_level}
+                                probability={data.ensemble.probability}
+                            />
+
+                            <RegionalContext />
+
+                            <Recommendations
+                                riskLevel={data.ensemble.risk_level}
+                            />
+
+                            <div className="flex items-center justify-between rounded-lg border bg-card p-4 text-sm">
+                                <p className="text-muted-foreground">
+                                    Trained on flooded and unflooded points
+                                    from Davao City using 8 conditioning factors.
+                                </p>
+                                <Button
+                                    onClick={handleBack}
+                                    variant="outline"
+                                >
+                                    <ArrowLeft aria-hidden="true" className="mr-1.5 h-3 w-3" />
+                                    New Analysis
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <Card>
+                            <CardContent className="pt-6 text-sm text-muted-foreground">
+                                No prediction result to display yet.
                             </CardContent>
                         </Card>
-                    </div>
-
-                    {/* Right Column */}
-                    <div className="lg:col-span-2 space-y-6">
-                        {isPending ? (
-                            <>
-                                <Skeleton className="h-64 w-full rounded-xl" />
-                                <Skeleton className="h-80 w-full rounded-xl" />
-                            </>
-                        ) : isSuccess && data ? (
-                            <>
-                                <ModelComparison
-                                    baselineRf={data.baseline_rf}
-                                    ensemble={data.ensemble}
-                                />
-
-                                <Interpretation
-                                    riskLevel={data.ensemble.risk_level}
-                                    probability={data.ensemble.probability}
-                                />
-
-                                <RegionalContext />
-
-                                <Recommendations
-                                    riskLevel={data.ensemble.risk_level}
-                                />
-
-                                <div className="flex items-center justify-between rounded-lg border bg-card p-4 text-sm">
-                                    <p className="text-muted-foreground">
-                                        Trained on flooded and unflooded points
-                                        from Davao City using 8 conditioning factors.
-                                    </p>
-                                    <Button
-                                        onClick={handleBack}
-                                        variant="outline"
-                                        size="sm"
-                                    >
-                                        <ArrowLeft className="mr-1.5 h-3 w-3" />
-                                        New Analysis
-                                    </Button>
-                                </div>
-                            </>
-                        ) : (
-                            <Card>
-                                <CardContent className="pt-6 text-sm text-muted-foreground">
-                                    No prediction result to display yet.
-                                </CardContent>
-                            </Card>
-                        )}
-                    </div>
+                    )}
                 </div>
-            </div>
+            </main>
         </div>
     );
 }
 
 function Recommendations({ riskLevel }: { riskLevel: string }) {
-    const isHighRisk = riskLevel === "Very High" || riskLevel === "High";
+    const isHighRisk = riskLevel === "High";
     const isModerate = riskLevel === "Moderate";
 
     return (
@@ -272,7 +221,7 @@ function RecommendationItem({
 }) {
     return (
         <div className="flex gap-2">
-            {icon}
+            <span aria-hidden="true">{icon}</span>
             <p>{children}</p>
         </div>
     );
