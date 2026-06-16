@@ -63,7 +63,7 @@ export function ModelComparison({
                         <ModelStats prediction={baselineRf} />
                         <div className="pt-2 border-t border-border">
                             <p className="text-xs text-muted-foreground">
-                                AUC: 0.85 · Single Algorithm
+                                Single Algorithm
                             </p>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ export function ModelComparison({
                         <ModelStats prediction={ensemble} accent />
                         <div className="pt-2 border-t border-primary/20">
                             <p className="text-xs text-muted-foreground">
-                                AUC: 0.87 · Stacking Ensemble
+                                Stacking Ensemble
                             </p>
                         </div>
                     </div>
