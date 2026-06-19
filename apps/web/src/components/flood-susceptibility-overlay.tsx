@@ -23,13 +23,12 @@ export function FloodSusceptibilityOverlay({
   map,
   url,
 }: FloodSusceptibilityOverlayProps) {
-  const { data, loading, error, retry } = useFloodSusceptibility(url);
+  const { data, loading, error, retry, loadingPhase } =
+    useFloodSusceptibility(url);
 
   const [visible, setVisible] = useState(true);
   const [opacity] = useState(DEFAULT_OPACITY);
-  const [activeClasses] = useState<Set<number>>(
-    () => new Set(ALL_CLASSES),
-  );
+  const [activeClasses] = useState<Set<number>>(() => new Set(ALL_CLASSES));
 
   const layerRef = useRef<L.GeoJSON | null>(null);
 
@@ -38,7 +37,6 @@ export function FloodSusceptibilityOverlay({
     [activeClasses],
   );
 
-  /* ── GeoJSON layer ── */
   useEffect(() => {
     if (!map || !data || !visible) {
       if (layerRef.current) {
@@ -51,6 +49,8 @@ export function FloodSusceptibilityOverlay({
     const ac = new Set(activeClasses);
 
     const layer = L.geoJSON(data, {
+      renderer: L.canvas(),
+      interactive: false,
       filter: (feature) => {
         if (!feature.geometry) return false;
         const dn = (feature.properties?.DN ?? feature.properties?.dn) as
@@ -58,53 +58,17 @@ export function FloodSusceptibilityOverlay({
           | undefined;
         return typeof dn === "number" && ac.has(dn);
       },
-      style: () => ({
-        fillColor: "#cccccc",
-        fillOpacity: opacity,
-        weight: 0,
-        stroke: false,
-      }),
-      onEachFeature: (feature, featureLayer) => {
+      style: (feature) => {
         const dn = (feature.properties?.DN ?? feature.properties?.dn) as
           | number
           | undefined;
         const cls = dn ? SUSCEPTIBILITY_CLASSES[dn] : undefined;
-        if (!cls) return;
-
-        (featureLayer as L.Path).setStyle({ fillColor: cls.color });
-
-        featureLayer.on({
-          mouseover: (e) => {
-            const target = e.target;
-            target.setStyle({
-              fillOpacity: Math.min(
-                opacity + HOVER_OPACITY_BOOST,
-                MAX_HOVER_OPACITY,
-              ),
-            });
-            if (!target.getTooltip()) {
-              target
-                .bindTooltip(
-                  `<div class="flex items-center gap-2 text-sm">
-                    <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${cls.color};flex-shrink:0"></span>
-                    <span style="font-weight:600">${cls.label}</span>
-                    <span style="color:#94a3b8">${cls.range}</span>
-                  </div>`,
-                  {
-                    className: "flood-tooltip",
-                    sticky: true,
-                    direction: "top",
-                  },
-                )
-                .openTooltip(e.latlng);
-            }
-          },
-          mouseout: (e) => {
-            const target = e.target;
-            target.setStyle({ fillOpacity: opacity });
-            target.closeTooltip();
-          },
-        });
+        return {
+          fillColor: cls?.color ?? "#cccccc",
+          fillOpacity: opacity * (cls?.opacity ?? 1),
+          weight: 0,
+          stroke: false,
+        };
       },
     }).addTo(map);
 
@@ -116,13 +80,11 @@ export function FloodSusceptibilityOverlay({
     };
   }, [map, data, visible, activeClassesKey, opacity]);
 
-  /* ── Handle opacity changes on existing layer ── */
   useEffect(() => {
     if (!layerRef.current) return;
     layerRef.current.setStyle({ fillOpacity: opacity });
   }, [opacity]);
 
-  /* ── Legend control ── */
   useEffect(() => {
     if (!map) return;
 
@@ -162,23 +124,31 @@ export function FloodSusceptibilityOverlay({
 
   return (
     <>
-      {/* Toggle — below My Location button */}
       <div className="absolute top-14 right-3 z-1000">
         <button
           onClick={() => setVisible((v) => !v)}
+          disabled={loading}
           className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
-            visible
-              ? "border-[#3b82f6] bg-[#3b82f6] text-white hover:bg-[#3b82f6]/90"
-              : "border-border bg-card text-muted-foreground hover:bg-accent"
+            loading
+              ? "cursor-not-allowed border-border bg-card text-muted-foreground opacity-50"
+              : visible
+                ? "border-[#3b82f6] bg-[#3b82f6] text-white hover:bg-[#3b82f6]/90"
+                : "border-border bg-card text-muted-foreground hover:bg-accent"
           }`}
-          title={visible ? "Hide flood layer" : "Show flood layer"}
+          title={
+            loading
+              ? "Loading overlay data\u2026"
+              : visible
+                ? "Hide flood layer"
+                : "Show flood layer"
+          }
         >
           <Layers className="h-3.5 w-3.5" />
-          {visible ? "Susceptibility" : "Susceptibility"}
+          Susceptibility
         </button>
       </div>
 
-      {loading && <LoadingBanner />}
+      {loading && <LoadingBanner phase={loadingPhase} />}
       {error && !loading && (
         <ErrorBanner message={error} onRetry={retry} />
       )}
