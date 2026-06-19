@@ -77,9 +77,10 @@ export function MapComponent({
 
         // Initialize map centered on Davao City
         const map = L.map(mapContainerRef.current, {
-            center: [7.07, 125.61], // Davao City center
+            center: [7.07, 125.61],
             zoom: 12,
             zoomControl: false,
+            preferCanvas: true,
         });
 
         // Keep zoom controls at bottom-right so quick navigation can sit above.

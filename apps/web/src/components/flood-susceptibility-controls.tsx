@@ -14,6 +14,7 @@ interface FloodSusceptibilityControlsProps {
   activeClasses: Set<number>;
   data: GeoJSON.FeatureCollection | null;
   stats: SusceptibilityStats | null;
+  loading: boolean;
   onVisibleChange: (v: boolean) => void;
   onOpacityChange: (v: number) => void;
   onActiveClassesChange: (v: Set<number>) => void;
@@ -25,6 +26,7 @@ export function FloodSusceptibilityControls({
   activeClasses,
   data,
   stats,
+  loading,
   onVisibleChange,
   onOpacityChange,
   onActiveClassesChange,
@@ -66,12 +68,22 @@ export function FloodSusceptibilityControls({
   return (
     <div className="flood-controls absolute left-4 z-[1000]" style={{ top: "76px" }}>
       <div className="w-64 rounded-xl bg-[rgba(15,23,42,0.92)] text-[#f1f5f9] shadow-xl backdrop-blur-md transition-all">
-        {/* Header with collapse */}
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
           <button
-            onClick={() => onVisibleChange(!visible)}
-            className="flex items-center gap-2 text-sm font-medium"
-            title={visible ? "Hide layer" : "Show layer"}
+            onClick={() => {
+              if (!loading) onVisibleChange(!visible);
+            }}
+            disabled={loading}
+            className={`flex items-center gap-2 text-sm font-medium ${
+              loading ? "cursor-not-allowed opacity-50" : ""
+            }`}
+            title={
+              loading
+                ? "Loading overlay data\u2026"
+                : visible
+                  ? "Hide layer"
+                  : "Show layer"
+            }
           >
             {visible ? (
               <Eye className="h-4 w-4 text-[#3b82f6]" />
@@ -95,12 +107,10 @@ export function FloodSusceptibilityControls({
 
         {panelOpen && (
           <div className="space-y-4 px-4 pb-4 pt-3">
-            {/* Model source */}
             <p className="text-[10px] leading-tight text-white/50">
               {SOURCE_LABEL}
             </p>
 
-            {/* Opacity */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs text-white/70">Opacity</label>
@@ -120,7 +130,6 @@ export function FloodSusceptibilityControls({
               />
             </div>
 
-            {/* Class filter chips */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs text-white/70">Classes</label>
@@ -159,7 +168,6 @@ export function FloodSusceptibilityControls({
               </div>
             </div>
 
-            {/* Statistics toggle */}
             {stats && (
               <div className="space-y-2">
                 <button
@@ -209,7 +217,6 @@ export function FloodSusceptibilityControls({
               </div>
             )}
 
-            {/* Export */}
             <button
               onClick={handleExport}
               disabled={!data}
