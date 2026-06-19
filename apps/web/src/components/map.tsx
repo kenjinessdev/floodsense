@@ -97,45 +97,50 @@ export function MapComponent({
             .get("/final_davao_city_boundary.geojson")
             .then((res) => {
                 const feature = res.data.features?.[0];
-                if (feature?.geometry?.type === "MultiPolygon") {
-                    const coords = feature.geometry.coordinates[0][0] as Array<
-                        [number, number]
-                    >;
-                    const wgs84Ring = coords.map(([e, n]) => utmToWgs84(e, n));
-                    boundaryRef.current = wgs84Ring;
+                if (!feature?.geometry) return;
 
-                    const geoJson = {
-                        type: "FeatureCollection" as const,
-                        features: [
-                            {
-                                type: "Feature" as const,
-                                geometry: {
-                                    type: "MultiPolygon" as const,
-                                    coordinates: [
-                                        [
-                                            wgs84Ring.map(([lat, lng]) => [
-                                                lng,
-                                                lat,
-                                            ]),
-                                        ],
-                                    ],
-                                },
-                                properties: {},
-                            },
-                        ],
-                    };
+                const geom = feature.geometry;
+                let shell: Array<[number, number]>;
 
-                    const layer = L.geoJSON(geoJson as any, {
-                        style: {
-                            color: "#3b82f6",
-                            weight: 2,
-                            fillOpacity: 0,
-                            dashArray: "5, 10",
-                        },
-                    }).addTo(map);
-
-                    map.fitBounds(layer.getBounds(), { padding: [32, 32] });
+                if (geom.type === "MultiPolygon") {
+                    shell = (
+                        geom.coordinates[0][0] as Array<[number, number]>
+                    ).map(([e, n]) => utmToWgs84(e, n));
+                } else if (geom.type === "Polygon") {
+                    shell = (
+                        geom.coordinates[0] as Array<[number, number]>
+                    ).map(([e, n]) => utmToWgs84(e, n));
+                } else {
+                    return;
                 }
+
+                boundaryRef.current = shell;
+
+                const lngLatShell = shell.map(([lat, lng]) => [lng, lat]);
+                const geoJson = {
+                    type: "FeatureCollection" as const,
+                    features: [
+                        {
+                            type: "Feature" as const,
+                            geometry: {
+                                type: "MultiPolygon" as const,
+                                coordinates: [[lngLatShell]],
+                            },
+                            properties: {},
+                        },
+                    ],
+                };
+
+                const layer = L.geoJSON(geoJson as any, {
+                    style: {
+                        color: "#3b82f6",
+                        weight: 2,
+                        fillOpacity: 0,
+                        dashArray: "5, 10",
+                    },
+                }).addTo(map);
+
+                map.fitBounds(layer.getBounds(), { padding: [32, 32] });
             })
             .catch((err) => console.error("Failed to load boundary:", err));
 
