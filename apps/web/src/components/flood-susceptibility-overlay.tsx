@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import L from "leaflet";
+import type RBush from "rbush";
 import { useFloodSusceptibility } from "@/hooks/use-flood-susceptibility";
 import {
   SUSCEPTIBILITY_CLASSES,
@@ -7,12 +8,14 @@ import {
   CLASS_ORDER_DESC,
   ENSEMBLE_SHORT,
   DEFAULT_OPACITY,
-  HOVER_OPACITY_BOOST,
-  MAX_HOVER_OPACITY,
+  CHUNK_SIZE,
 } from "@/lib/flood-susceptibility";
+import { ingestInChunks, AbortError } from "@/lib/chunk-scheduler";
+import { buildIndex, queryBounds } from "@/lib/spatial-index";
+import type { BBoxEntry } from "@/lib/spatial-index";
 import { LoadingBanner } from "./loading-banner";
 import { ErrorBanner } from "./error-banner";
-import { Layers } from "lucide-react";
+import { Layers, Loader2 } from "lucide-react";
 
 interface FloodSusceptibilityOverlayProps {
   map: L.Map | null;
@@ -28,62 +31,217 @@ export function FloodSusceptibilityOverlay({
 
   const [visible, setVisible] = useState(true);
   const [opacity] = useState(DEFAULT_OPACITY);
-  const [activeClasses] = useState<Set<number>>(() => new Set(ALL_CLASSES));
+  const [activeClasses] = useState<Set<number>>(
+    () => new Set(ALL_CLASSES),
+  );
+  const [renderProgress, setRenderProgress] = useState(0);
+  const [ingestionState, setIngestionState] = useState<
+    "idle" | "ingesting" | "ready"
+  >("idle");
 
   const layerRef = useRef<L.GeoJSON | null>(null);
+  const allFeaturesRef = useRef<GeoJSON.Feature[]>([]);
+  const spatialIndexRef = useRef<RBush<BBoxEntry> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const activeClassesRef = useRef(activeClasses);
+  const mapRef = useRef(map);
+  const opacityRef = useRef(opacity);
+
+  activeClassesRef.current = activeClasses;
+  mapRef.current = map;
+  opacityRef.current = opacity;
 
   const activeClassesKey = useMemo(
     () => JSON.stringify([...activeClasses].sort()),
     [activeClasses],
   );
 
+  const styleFn = useCallback(
+    (feature: GeoJSON.Feature | undefined): L.PathOptions => {
+      const f = feature ?? ({} as GeoJSON.Feature);
+      const dn = (f.properties?.DN ?? f.properties?.dn) as
+        | number
+        | undefined;
+      return {
+        fillColor: dn ? SUSCEPTIBILITY_CLASSES[dn]?.color ?? "#cccccc" : "#cccccc",
+        fillOpacity: opacityRef.current,
+        weight: 0,
+        stroke: false,
+      };
+    },
+    [],
+  );
+
+  const filterFn = useCallback(
+    (feature: GeoJSON.Feature | undefined): boolean => {
+      if (!feature?.geometry) return false;
+      const dn = (feature.properties?.DN ?? feature.properties?.dn) as
+        | number
+        | undefined;
+      return typeof dn === "number" && activeClassesRef.current.has(dn);
+    },
+    [],
+  );
+
+  const updateLayerFeatures = useCallback(
+    (features: GeoJSON.Feature[]) => {
+      if (!layerRef.current) return;
+      layerRef.current.clearLayers();
+      if (features.length === 0) return;
+      const fc: GeoJSON.FeatureCollection = {
+        type: "FeatureCollection",
+        features,
+      };
+      layerRef.current.addData(fc);
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (!map || !data || !visible) {
-      if (layerRef.current) {
-        map?.removeLayer(layerRef.current);
-        layerRef.current = null;
-      }
-      return;
-    }
+    if (!map) return;
 
-    const ac = new Set(activeClasses);
-
-    const layer = L.geoJSON(data, {
-      renderer: L.canvas(),
+    const layer = L.geoJSON([], {
       interactive: false,
-      filter: (feature) => {
-        if (!feature.geometry) return false;
-        const dn = (feature.properties?.DN ?? feature.properties?.dn) as
-          | number
-          | undefined;
-        return typeof dn === "number" && ac.has(dn);
-      },
-      style: (feature) => {
-        const dn = (feature.properties?.DN ?? feature.properties?.dn) as
-          | number
-          | undefined;
-        const cls = dn ? SUSCEPTIBILITY_CLASSES[dn] : undefined;
-        return {
-          fillColor: cls?.color ?? "#cccccc",
-          fillOpacity: opacity * (cls?.opacity ?? 1),
-          weight: 0,
-          stroke: false,
-        };
-      },
-    }).addTo(map);
-
+      filter: filterFn,
+      style: styleFn,
+    });
+    layer.addTo(map);
     layerRef.current = layer;
 
     return () => {
       map.removeLayer(layer);
       layerRef.current = null;
     };
-  }, [map, data, visible, activeClassesKey, opacity]);
+  }, [map, filterFn, styleFn]);
 
   useEffect(() => {
-    if (!layerRef.current) return;
-    layerRef.current.setStyle({ fillOpacity: opacity });
-  }, [opacity]);
+    if (!map || !layerRef.current || !data || !visible) {
+      if (abortRef.current) {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+      setIngestionState("idle");
+      setRenderProgress(0);
+      if (layerRef.current) {
+        layerRef.current.clearLayers();
+      }
+      spatialIndexRef.current = null;
+      allFeaturesRef.current = [];
+      return;
+    }
+
+    const features = data.features
+      .filter((f) => f.geometry)
+      .sort((a, b) => {
+        const dnA = (a.properties?.DN ?? a.properties?.dn) as number | undefined;
+        const dnB = (b.properties?.DN ?? b.properties?.dn) as number | undefined;
+        return (dnB ?? 0) - (dnA ?? 0);
+      });
+
+    if (features.length === 0) return;
+
+    allFeaturesRef.current = features;
+    spatialIndexRef.current = null;
+    layerRef.current.clearLayers();
+
+    const ac = new AbortController();
+    abortRef.current = ac;
+
+    setRenderProgress(0);
+    setIngestionState("ingesting");
+
+    const runIngestion = async () => {
+      try {
+        await ingestInChunks(
+          features,
+          (batch, progress) => {
+            const batchFc: GeoJSON.FeatureCollection = {
+              type: "FeatureCollection",
+              features: batch,
+            };
+            layerRef.current?.addData(batchFc);
+            setRenderProgress(progress.completed / progress.total);
+          },
+          { chunkSize: CHUNK_SIZE, signal: ac.signal },
+        );
+
+        if (ac.signal.aborted) return;
+
+        spatialIndexRef.current = buildIndex(features);
+        setIngestionState("ready");
+      } catch (err) {
+        if (err instanceof AbortError) return;
+        console.error("Chunked ingestion failed:", err);
+      }
+    };
+
+    void runIngestion();
+
+    return () => {
+      ac.abort();
+      abortRef.current = null;
+    };
+  }, [map, data, visible, styleFn, filterFn]);
+
+  useEffect(() => {
+    if (!map || !layerRef.current || !visible) return;
+    if (ingestionState !== "ready" || !spatialIndexRef.current) {
+      return;
+    }
+
+    const handleMoveEnd = () => {
+      if (
+        !spatialIndexRef.current ||
+        !layerRef.current ||
+        !mapRef.current
+      )
+        return;
+
+      const bounds = mapRef.current.getBounds();
+      const hits = queryBounds(spatialIndexRef.current, {
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest(),
+      });
+
+      const visibleFeatures = hits
+        .map((h) => allFeaturesRef.current[h.id])
+        .filter(Boolean);
+
+      updateLayerFeatures(visibleFeatures);
+    };
+
+    map.on("moveend", handleMoveEnd);
+    map.on("zoomend", handleMoveEnd);
+    handleMoveEnd();
+
+    return () => {
+      map.off("moveend", handleMoveEnd);
+      map.off("zoomend", handleMoveEnd);
+    };
+  }, [map, visible, ingestionState, updateLayerFeatures]);
+
+  useEffect(() => {
+    if (!layerRef.current || ingestionState !== "ready") return;
+    const bounds = map?.getBounds();
+    if (!bounds) return;
+
+    const hits = spatialIndexRef.current
+      ? queryBounds(spatialIndexRef.current, {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest(),
+        })
+      : [];
+
+    const visibleFeatures = spatialIndexRef.current
+      ? hits.map((h) => allFeaturesRef.current[h.id]).filter(Boolean)
+      : allFeaturesRef.current;
+
+    updateLayerFeatures(visibleFeatures);
+  }, [activeClassesKey, ingestionState, map, updateLayerFeatures]);
 
   useEffect(() => {
     if (!map) return;
@@ -122,11 +280,23 @@ export function FloodSusceptibilityOverlay({
     };
   }, [map]);
 
+  const handleToggle = () => {
+    if (visible && ingestionState === "ingesting") {
+      abortRef.current?.abort();
+      abortRef.current = null;
+      setIngestionState("idle");
+      setRenderProgress(0);
+      spatialIndexRef.current = null;
+      if (layerRef.current) layerRef.current.clearLayers();
+    }
+    setVisible((v) => !v);
+  };
+
   return (
     <>
-      <div className="absolute top-14 right-3 z-1000">
+      <div className="absolute top-14 right-3 z-1000 flex flex-col items-end gap-2">
         <button
-          onClick={() => setVisible((v) => !v)}
+          onClick={handleToggle}
           disabled={loading}
           className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
             loading
@@ -143,9 +313,22 @@ export function FloodSusceptibilityOverlay({
                 : "Show flood layer"
           }
         >
-          <Layers className="h-3.5 w-3.5" />
+          {ingestionState === "ingesting" ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Layers className="h-3.5 w-3.5" />
+          )}
           Susceptibility
         </button>
+
+        {ingestionState === "ingesting" && visible && (
+          <div className="w-36 overflow-hidden rounded-full bg-muted shadow-sm">
+            <div
+              className="h-1 rounded-full bg-[#3b82f6] transition-all duration-200 ease-out"
+              style={{ width: `${Math.round(renderProgress * 100)}%` }}
+            />
+          </div>
+        )}
       </div>
 
       {loading && <LoadingBanner phase={loadingPhase} />}
