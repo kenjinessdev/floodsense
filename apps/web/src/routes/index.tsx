@@ -226,7 +226,6 @@ function HomeComponent() {
                     />
                     <FloodSusceptibilityOverlay
                         map={mapInstance}
-                        url="/ensemble_map_davao_City.json"
                     />
 
                     {/* Mobile bottom overlay panel */}
