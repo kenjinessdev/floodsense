@@ -44,7 +44,9 @@ export const ENSEMBLE_SHORT = "RF + XGBoost Ensemble";
 export const FOOTER_TEXT = "Avena et al., 2026 · OpenStreetMap";
 
 export const DEFAULT_OPACITY = 0.65;
-export const HOVER_OPACITY_BOOST = 0.2;
-export const MAX_HOVER_OPACITY = 0.95;
 
 export const CLASS_ORDER_DESC = [4, 3, 2, 1] as const;
+
+export const CHUNK_SIZE = 500;
+export const CHUNK_DELAY_MS = 0;
+export const LOD_BREAKPOINT = 12;

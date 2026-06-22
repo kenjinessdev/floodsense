@@ -10,7 +10,7 @@
         "start": "vite",
         "check-types": "tsc --noEmit",
         "generate-pwa-assets": "pwa-assets-generator",
-    "dissolve-overlay": "node scripts/dissolve-overlay.mjs"
+        "dissolve-overlay": "node scripts/dissolve-overlay.mjs"
     },
     "dependencies": {
         "@base-ui/react": "^1.0.0",
@@ -27,6 +27,7 @@
         "leaflet": "^1.9.4",
         "lucide-react": "^0.473.0",
         "next-themes": "^0.4.6",
+        "rbush": "^4.0.1",
         "react": "19.2.3",
         "react-dom": "19.2.3",
         "shadcn": "^3.6.2",
@@ -41,6 +42,7 @@
         "@tanstack/react-router-devtools": "^1.141.1",
         "@tanstack/router-plugin": "^1.141.1",
         "@types/node": "catalog:",
+        "@types/rbush": "^4.0.0",
         "@types/react": "19.2.7",
         "@types/react-dom": "19.2.3",
         "@vite-pwa/assets-generator": "^1.0.0",

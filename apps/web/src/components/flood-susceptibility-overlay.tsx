@@ -1,89 +1,59 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
-import { useFloodSusceptibility } from "@/hooks/use-flood-susceptibility";
 import {
   SUSCEPTIBILITY_CLASSES,
-  ALL_CLASSES,
   CLASS_ORDER_DESC,
   ENSEMBLE_SHORT,
-  DEFAULT_OPACITY,
-  HOVER_OPACITY_BOOST,
-  MAX_HOVER_OPACITY,
 } from "@/lib/flood-susceptibility";
-import { LoadingBanner } from "./loading-banner";
-import { ErrorBanner } from "./error-banner";
 import { Layers } from "lucide-react";
+
+const TILE_URL = `${import.meta.env.VITE_SERVER_URL}/static/tiles/{z}/{x}/{y}.png`;
+const TILE_OPACITY = 0.7;
+const DAVAO_BOUNDS = L.latLngBounds([6.0, 125.0], [7.5, 126.0]);
 
 interface FloodSusceptibilityOverlayProps {
   map: L.Map | null;
-  url: string;
 }
 
 export function FloodSusceptibilityOverlay({
   map,
-  url,
 }: FloodSusceptibilityOverlayProps) {
-  const { data, loading, error, retry, loadingPhase } =
-    useFloodSusceptibility(url);
-
   const [visible, setVisible] = useState(true);
-  const [opacity] = useState(DEFAULT_OPACITY);
-  const [activeClasses] = useState<Set<number>>(() => new Set(ALL_CLASSES));
-
-  const layerRef = useRef<L.GeoJSON | null>(null);
-
-  const activeClassesKey = useMemo(
-    () => JSON.stringify([...activeClasses].sort()),
-    [activeClasses],
-  );
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
 
   useEffect(() => {
-    if (!map || !data || !visible) {
-      if (layerRef.current) {
-        map?.removeLayer(layerRef.current);
-        layerRef.current = null;
-      }
-      return;
+    if (!map) return;
+
+    const layer = L.tileLayer(TILE_URL, {
+      opacity: TILE_OPACITY,
+      bounds: DAVAO_BOUNDS,
+      minZoom: 8,
+      maxZoom: 15,
+      attribution: "FloodSense",
+    });
+
+    if (visible) {
+      layer.addTo(map);
     }
 
-    const ac = new Set(activeClasses);
-
-    const layer = L.geoJSON(data, {
-      renderer: L.canvas(),
-      interactive: false,
-      filter: (feature) => {
-        if (!feature.geometry) return false;
-        const dn = (feature.properties?.DN ?? feature.properties?.dn) as
-          | number
-          | undefined;
-        return typeof dn === "number" && ac.has(dn);
-      },
-      style: (feature) => {
-        const dn = (feature.properties?.DN ?? feature.properties?.dn) as
-          | number
-          | undefined;
-        const cls = dn ? SUSCEPTIBILITY_CLASSES[dn] : undefined;
-        return {
-          fillColor: cls?.color ?? "#cccccc",
-          fillOpacity: opacity * (cls?.opacity ?? 1),
-          weight: 0,
-          stroke: false,
-        };
-      },
-    }).addTo(map);
-
-    layerRef.current = layer;
+    tileLayerRef.current = layer;
 
     return () => {
-      map.removeLayer(layer);
-      layerRef.current = null;
+      layer.remove();
+      tileLayerRef.current = null;
     };
-  }, [map, data, visible, activeClassesKey, opacity]);
+  }, [map]);
 
   useEffect(() => {
-    if (!layerRef.current) return;
-    layerRef.current.setStyle({ fillOpacity: opacity });
-  }, [opacity]);
+    const layer = tileLayerRef.current;
+    if (!layer || !map) return;
+
+    if (visible) {
+      map.addLayer(layer);
+    } else {
+      map.removeLayer(layer);
+    }
+  }, [visible, map]);
 
   useEffect(() => {
     if (!map) return;
@@ -123,35 +93,19 @@ export function FloodSusceptibilityOverlay({
   }, [map]);
 
   return (
-    <>
-      <div className="absolute top-14 right-3 z-1000">
-        <button
-          onClick={() => setVisible((v) => !v)}
-          disabled={loading}
-          className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
-            loading
-              ? "cursor-not-allowed border-border bg-card text-muted-foreground opacity-50"
-              : visible
-                ? "border-[#3b82f6] bg-[#3b82f6] text-white hover:bg-[#3b82f6]/90"
-                : "border-border bg-card text-muted-foreground hover:bg-accent"
-          }`}
-          title={
-            loading
-              ? "Loading overlay data\u2026"
-              : visible
-                ? "Hide flood layer"
-                : "Show flood layer"
-          }
-        >
-          <Layers className="h-3.5 w-3.5" />
-          Susceptibility
-        </button>
-      </div>
-
-      {loading && <LoadingBanner phase={loadingPhase} />}
-      {error && !loading && (
-        <ErrorBanner message={error} onRetry={retry} />
-      )}
-    </>
+    <div className="absolute top-14 right-3 z-1000 flex flex-col items-end gap-2">
+      <button
+        onClick={() => setVisible((v) => !v)}
+        className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
+          visible
+            ? "border-[#3b82f6] bg-[#3b82f6] text-white hover:bg-[#3b82f6]/90"
+            : "border-border bg-card text-muted-foreground hover:bg-accent"
+        }`}
+        title={visible ? "Hide flood layer" : "Show flood layer"}
+      >
+        <Layers className="h-3.5 w-3.5" />
+        Susceptibility
+      </button>
+    </div>
   );
 }

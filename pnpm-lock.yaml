@@ -84,6 +84,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      rbush:
+        specifier: ^4.0.1
+        version: 4.0.1
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -121,6 +124,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.3
+      '@types/rbush':
+        specifier: ^4.0.0
+        version: 4.0.0
       '@types/react':
         specifier: 19.2.7
         version: 19.2.7
@@ -3356,9 +3362,6 @@ packages:
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
@@ -6539,8 +6542,7 @@ snapshots:
 
   '@types/proj4@2.5.2': {}
 
-  '@types/rbush@4.0.0':
-    optional: true
+  '@types/rbush@4.0.0': {}
 
   '@types/react-dom@19.2.3(@types/react@19.2.7)':
     dependencies:
@@ -7995,8 +7997,6 @@ snapshots:
 
   lodash.sortby@4.7.0: {}
 
-  lodash@4.17.21: {}
-
   lodash@4.18.1: {}
 
   log-symbols@6.0.0:
@@ -8443,8 +8443,7 @@ snapshots:
 
   quickselect@2.0.0: {}
 
-  quickselect@3.0.0:
-    optional: true
+  quickselect@3.0.0: {}
 
   randombytes@2.1.0:
     dependencies:
@@ -8466,7 +8465,6 @@ snapshots:
   rbush@4.0.1:
     dependencies:
       quickselect: 3.0.0
-    optional: true
 
   rc@1.2.8:
     dependencies:
@@ -9429,7 +9427,7 @@ snapshots:
       fast-json-stable-stringify: 2.1.0
       fs-extra: 9.1.0
       glob: 11.1.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       pretty-bytes: 5.6.0
       rollup: 2.79.2
       source-map: 0.8.0-beta.0
